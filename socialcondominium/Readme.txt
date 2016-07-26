@@ -1,0 +1,1 @@
+Images for the SOCIALCONDOMINIUM APP README.rd file.
