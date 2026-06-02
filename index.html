@@ -49,7 +49,7 @@
 
   /* hero */
   header.hero{position:relative;padding:120px 0 90px;overflow:hidden}
-  #stars{position:absolute;inset:0;z-index:0;opacity:.9;pointer-events:none}
+  #stars{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:.9;pointer-events:none}
   .hero .wrap{position:relative;z-index:1}
   .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:26px}
   h1{font-size:clamp(48px,8.5vw,96px);line-height:.96;margin:0 0 24px;font-weight:600;letter-spacing:-.015em}
@@ -233,20 +233,31 @@ function setLang(l){
 document.querySelectorAll(".lang").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 
 const moon=document.getElementById("ic-moon"),sun=document.getElementById("ic-sun");
+function applyTheme(t){
+  docEl.setAttribute("data-theme",t);
+  moon.style.display=t==="dark"?"block":"none";
+  sun.style.display=t==="dark"?"none":"block";
+}
+let theme="light";
+try{ theme=localStorage.getItem("ml-theme")||"light"; }catch(e){}
+applyTheme(theme);
 document.getElementById("theme").onclick=()=>{
-  const dark=docEl.getAttribute("data-theme")==="dark";
-  docEl.setAttribute("data-theme",dark?"light":"dark");
-  moon.style.display=dark?"none":"block";sun.style.display=dark?"block":"none";
+  theme=docEl.getAttribute("data-theme")==="dark"?"light":"dark";
+  applyTheme(theme);
+  try{ localStorage.setItem("ml-theme",theme); }catch(e){}
 };
 const menu=document.getElementById("menu");
 document.getElementById("mtoggle").onclick=()=>menu.classList.toggle("open");
 menu.querySelectorAll("a").forEach(a=>a.onclick=()=>menu.classList.remove("open"));
 
-// starfield no hero
+// starfield no hero (top band, full width, density scales with width)
 (function(){
-  const c=document.getElementById("stars"),x=c.getContext("2d");let w,h;
-  function rs(){w=c.width=c.offsetWidth;h=c.height=c.offsetHeight;}
-  const S=Array.from({length:90},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.1+.2,a:Math.random()*.5+.1}));
+  const c=document.getElementById("stars"),x=c.getContext("2d");let w,h,S=[];
+  function rs(){
+    w=c.width=c.offsetWidth; h=c.height=c.offsetHeight;
+    const n=Math.max(50, Math.min(240, Math.round(w/12)));
+    S=Array.from({length:n},()=>({x:Math.random(),y:Math.random()*0.55,r:Math.random()*1.1+.2,a:Math.random()*.5+.1}));
+  }
   function d(){x.clearRect(0,0,w,h);S.forEach(s=>{x.globalAlpha=s.a;
     x.fillStyle=docEl.getAttribute("data-theme")==="dark"?"#cfd6e6":"#9c7521";
     x.beginPath();x.arc(s.x*w,s.y*h,s.r,0,7);x.fill();});x.globalAlpha=1;}
