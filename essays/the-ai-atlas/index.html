@@ -151,8 +151,122 @@
   <a class="cta" href="/atlas/">Enter the Atlas →</a>
 </article>
 
-<article class="article" id="art-pt" style="display:none"></article>
-<article class="article" id="art-es" style="display:none"></article>
+<article class="article" id="art-pt" style="display:none">
+  <a class="back" href="/essays/">← Ensaios</a>
+  <div class="kicker">Ensaio</div>
+  <h1>O Atlas da IA: Origens e Motivações</h1>
+  <div class="meta">Marcelo Leal · 1 de junho de 2026</div>
+  <div class="rule"></div>
+
+  <p class="lead">Todo mundo em IA tem informação. Quase ninguém tem um mapa. O campo reinventa o próprio vocabulário a cada poucos meses, e o resultado não é entendimento, é ruído. O Atlas da IA é a minha resposta a esse ruído: um mapa do campo, onde o que importa não são as palavras, é como elas se conectam.</p>
+
+  <h2>Um mapa, não uma enciclopédia</h2>
+  <p>Uma enciclopédia te diz o que cada coisa é. Um mapa te diz como as coisas se relacionam, onde ficam, e onde as estradas se rompem. O Atlas é do segundo tipo. Cada ideia em IA é um nó, e o que importa é a linha entre eles.</p>
+
+  <figure data-name="atlas-overview.png">
+    <img src="img/atlas-overview.png" alt="Visão geral do grafo do Atlas da IA">
+    <figcaption>O Atlas: cada ideia um nó, cada relação uma linha.</figcaption>
+  </figure>
+
+  <p>O valor de um campo raramente está dentro de um único conceito. Ele vive no espaço entre os conceitos, no lugar onde uma ideia depende silenciosamente de outra, ou a contradiz. Esse espaço é exatamente onde a maioria para de olhar. O Atlas existe para torná-lo visível.</p>
+
+  <h2>Uma gramática para o campo</h2>
+  <p>Para mapear um campo você precisa de uma gramática. A minha tem uma regra que faz a maior parte do trabalho: o tipo classifica, os atributos descrevem. Todo nó é de um entre oito tipos: conceito, problema, solução, técnica, métrica, premissa, ponte, restrição.</p>
+
+  <figure class="fig-right" data-name="legend-types.png">
+    <img src="img/legend-types.png" alt="Os oito tipos de nó e suas cores">
+    <figcaption>Oito tipos. Cada ideia declara o que é.</figcaption>
+  </figure>
+
+  <p>Parece burocrático. É o oposto. Forçar cada ideia a declarar o que é expõe a confusão que a prosa esconde. <b>RAG</b> parece uma coisa até você perguntar se é uma ideia, um método, ou um jeito de resolver um problema. É a última. <b>Representação de conhecimento</b> parece uma ferramenta até você fazer a mesma pergunta, de novo e de novo. Então ela se revela: é um problema. A gramática não decora o campo. Ela o disciplina. Quando todo nó sabe o que é, as conexões param de mentir.</p>
+
+  <h2>O que é meu</h2>
+  <p>Duas coisas no Atlas não são fatos. São a minha leitura, e eu as marco como tal, porque o movimento honesto é separar aquilo em que o campo concorda do que eu penso.</p>
+  <p><b>Maturidade</b> é a visão do mercado, não a minha: emergente, contestado, consolidando, estabelecido. Diz o quão assentada uma ideia está lá fora, e qualquer um pode conferir.</p>
+
+  <figure class="fig-left" data-name="card-tension.png">
+    <img src="img/card-tension.png" alt="Card de um nó mostrando o campo Tensão">
+    <figcaption>Tensão: onde algo parece resolvido, mas será?</figcaption>
+  </figure>
+
+  <p><b>Tensão</b> é minha. Qualquer nó pode carregar uma: o lugar onde algo parece resolvido mas não está. É a pergunta que eu faria a um consenso que parou de se questionar. RAG está estabelecido, e eu ainda acho que a forma como enquadramos a recuperação esconde mais do que resolve. As duas coisas são verdade ao mesmo tempo, e o Atlas sustenta as duas sem hesitar.</p>
+  <p>E há as <b>pontes</b>, os nós que conectam a IA a coisas fora da computação. Esquecimento na neurociência. Ontologia como filosofia. O campo trata isso como enfeite. Eu trato como estrutural, porque as melhores ideias em tecnologia quase sempre chegaram de outro lugar primeiro.</p>
+
+  <h2>Como ler</h2>
+  <p>Pegue um canto do mapa e puxe o fio.</p>
+
+  <figure data-name="card-rag.png">
+    <img src="img/card-rag.png" alt="Card do nó RAG com suas conexões agrupadas">
+    <figcaption>Um nó, todas as suas conexões, agrupadas por tipo.</figcaption>
+  </figure>
+
+  <p><b>Alucinação</b> é um problema: o modelo afirma algo falso com total confiança. Ao lado dela ficam outras três. <b>Opacidade</b>, uma restrição: você não consegue ver por que o modelo respondeu, então não pega o erro por dentro. <b>Falta de ancoragem</b>, um problema: a resposta não está presa a uma fonte que você possa verificar. <b>Falta de contexto</b>, também um problema: o modelo nunca teve a informação para começar.</p>
+  <p>Uma solução atravessa as três. <b>RAG</b> busca conhecimento no momento da pergunta e entrega ao modelo, para que a resposta possa ser ancorada em algo fora dos dados de treino. E por baixo dela, uma técnica faz a maior parte do trabalho silencioso: <b>reranking</b>, que reordena o que a busca encontrou para o modelo ver a melhor evidência primeiro.</p>
+  <p>Esse é o método do atlas inteiro em miniatura. Você não lê uma definição. Você caminha de um problema para suas restrições, para as soluções que o atacam, para as técnicas que fazem essas soluções funcionarem. O mapa ensina as relações, que é exatamente a parte que as definições deixam de fora.</p>
+
+  <h2>Por que estou fazendo isto</h2>
+  <p>Honestamente, porque é assim que eu penso e aprendo, e porque o campo recompensa quem consegue segurar a forma inteira na cabeça enquanto vai fundo em um canto. O Atlas é as duas coisas ao mesmo tempo: amplitude no grafo, profundidade em cada nó.</p>
+  <p>É um estudo em público, não uma referência oficial. Vai estar errado em alguns pontos. Vai mudar. As leituras são minhas, e eu prefiro estar precisamente errado e corrigir do que vagamente certo e esquecer por quê. O mapa é o argumento.</p>
+  <a class="cta" href="/atlas/">Entrar no Atlas →</a>
+</article>
+<article class="article" id="art-es" style="display:none">
+  <a class="back" href="/essays/">← Ensayos</a>
+  <div class="kicker">Ensayo</div>
+  <h1>El Atlas de la IA: Orígenes y Motivaciones</h1>
+  <div class="meta">Marcelo Leal · 1 de junio de 2026</div>
+  <div class="rule"></div>
+
+  <p class="lead">Todos en IA tienen información. Casi nadie tiene un mapa. El campo reinventa su vocabulario cada pocos meses, y el resultado no es comprensión, es ruido. El Atlas de la IA es mi respuesta a ese ruido: un mapa del campo, donde lo que importa no son las palabras, es cómo se conectan.</p>
+
+  <h2>Un mapa, no una enciclopedia</h2>
+  <p>Una enciclopedia te dice qué es cada cosa. Un mapa te dice cómo se relacionan las cosas, dónde están, y dónde se rompen los caminos. El Atlas es del segundo tipo. Cada idea en IA es un nodo, y lo que importa es la línea entre ellos.</p>
+
+  <figure data-name="atlas-overview.png">
+    <img src="img/atlas-overview.png" alt="Vista general del grafo del Atlas de la IA">
+    <figcaption>El Atlas: cada idea un nodo, cada relación una línea.</figcaption>
+  </figure>
+
+  <p>El valor de un campo rara vez está dentro de un solo concepto. Vive en el espacio entre los conceptos, en el lugar donde una idea depende en silencio de otra, o la contradice. Ese espacio es exactamente donde la mayoría deja de mirar. El Atlas existe para hacerlo visible.</p>
+
+  <h2>Una gramática para el campo</h2>
+  <p>Para mapear un campo necesitas una gramática. La mía tiene una regla que hace la mayor parte del trabajo: el tipo clasifica, los atributos describen. Cada nodo es de uno entre ocho tipos: concepto, problema, solución, técnica, métrica, premisa, puente, restricción.</p>
+
+  <figure class="fig-right" data-name="legend-types.png">
+    <img src="img/legend-types.png" alt="Los ocho tipos de nodo y sus colores">
+    <figcaption>Ocho tipos. Cada idea declara lo que es.</figcaption>
+  </figure>
+
+  <p>Suena burocrático. Es lo contrario. Forzar a cada idea a declarar lo que es expone la confusión que la prosa esconde. <b>RAG</b> parece una cosa hasta que preguntas si es una idea, un método, o una forma de resolver un problema. Es lo último. <b>Representación del conocimiento</b> parece una herramienta hasta que haces la misma pregunta, una y otra vez. Entonces se revela: es un problema. La gramática no decora el campo. Lo disciplina. Cuando cada nodo sabe lo que es, las conexiones dejan de mentir.</p>
+
+  <h2>Lo que es mío</h2>
+  <p>Dos cosas en el Atlas no son hechos. Son mi lectura, y las marco como tal, porque el movimiento honesto es separar aquello en lo que el campo concuerda de lo que yo pienso.</p>
+  <p><b>Madurez</b> es la visión del mercado, no la mía: emergente, en disputa, consolidando, establecido. Dice qué tan asentada está una idea allá afuera, y cualquiera puede verificarlo.</p>
+
+  <figure class="fig-left" data-name="card-tension.png">
+    <img src="img/card-tension.png" alt="Card de un nodo mostrando el campo Tensión">
+    <figcaption>Tensión: donde algo parece resuelto, pero ¿lo está?</figcaption>
+  </figure>
+
+  <p><b>Tensión</b> es mía. Cualquier nodo puede llevar una: el lugar donde algo parece resuelto pero no lo está. Es la pregunta que le haría a un consenso que dejó de cuestionarse. RAG está establecido, y aún creo que la forma en que enmarcamos la recuperación esconde más de lo que resuelve. Las dos cosas son verdad al mismo tiempo, y el Atlas sostiene ambas sin titubear.</p>
+  <p>Y están los <b>puentes</b>, los nodos que conectan la IA con cosas fuera de la computación. El olvido en la neurociencia. La ontología como filosofía. El campo los trata como adorno. Yo los trato como estructura, porque las mejores ideas en tecnología casi siempre llegaron primero desde otro lugar.</p>
+
+  <h2>Cómo leerlo</h2>
+  <p>Toma una esquina del mapa y tira del hilo.</p>
+
+  <figure data-name="card-rag.png">
+    <img src="img/card-rag.png" alt="Card del nodo RAG con sus conexiones agrupadas">
+    <figcaption>Un nodo, todas sus conexiones, agrupadas por tipo.</figcaption>
+  </figure>
+
+  <p><b>Alucinación</b> es un problema: el modelo afirma algo falso con total confianza. A su lado hay tres más. <b>Opacidad</b>, una restricción: no puedes ver por qué el modelo respondió, así que no atrapas el error desde dentro. <b>Falta de anclaje</b>, un problema: la respuesta no está atada a una fuente que puedas verificar. <b>Falta de contexto</b>, también un problema: el modelo nunca tuvo la información para empezar.</p>
+  <p>Una solución cruza las tres. <b>RAG</b> busca conocimiento en el momento de la pregunta y lo entrega al modelo, para que la respuesta pueda anclarse en algo fuera de los datos de entrenamiento. Y debajo de ella, una técnica hace la mayor parte del trabajo silencioso: <b>reranking</b>, que reordena lo que la búsqueda encontró para que el modelo vea la mejor evidencia primero.</p>
+  <p>Ese es el método del atlas entero en miniatura. No lees una definición. Caminas de un problema a sus restricciones, a las soluciones que lo atacan, a las técnicas que hacen funcionar esas soluciones. El mapa enseña las relaciones, que es justamente la parte que las definiciones dejan fuera.</p>
+
+  <h2>Por qué hago esto</h2>
+  <p>Honestamente, porque es como pienso y aprendo, y porque el campo recompensa a quien puede sostener la forma entera en la cabeza mientras profundiza en una esquina. El Atlas es las dos cosas a la vez: amplitud en el grafo, profundidad en cada nodo.</p>
+  <p>Es un estudio en público, no una referencia oficial. Estará equivocado en algunos puntos. Cambiará. Las lecturas son mías, y prefiero estar precisamente equivocado y corregirlo que vagamente en lo correcto y olvidar por qué. El mapa es el argumento.</p>
+  <a class="cta" href="/atlas/">Entrar al Atlas →</a>
+</article>
 
 <script>
 const NAV = {
@@ -161,10 +275,6 @@ const NAV = {
   es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_contact:"Contacto"}
 };
 const docEl=document.documentElement;
-// PT/ES start as a copy of EN, ready to be translated later
-const en=document.getElementById("art-en");
-document.getElementById("art-pt").innerHTML=en.innerHTML;
-document.getElementById("art-es").innerHTML=en.innerHTML;
 function setLang(l){
   ["en","pt","es"].forEach(x=>document.getElementById("art-"+x).style.display = x===l?"block":"none");
   document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.getAttribute("data-i18n");if(NAV[l][k])el.textContent=NAV[l][k];});
