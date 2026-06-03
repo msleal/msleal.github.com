@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The AI Atlas: Origins and Motivations · Marcelo Leal</title>
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --mono:"SFMono-Regular",ui-monospace,"DejaVu Sans Mono",Menlo,Consolas,monospace;
+  }
+  [data-theme="dark"]{ --bg:#0b0e17; --bg2:#10131f; --fg:#e9e3d2; --fg-dim:#8a8472; --gold:#c8a24a; --line:rgba(200,162,74,.20); --card:rgba(255,255,255,.025); }
+  [data-theme="light"]{ --bg:#f2ece0; --bg2:#e9e2d2; --fg:#1c1a14; --fg-dim:#6d6452; --gold:#9c7521; --line:rgba(28,26,20,.16); --card:rgba(28,26,20,.025); }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--serif);transition:background .5s,color .5s;line-height:1.7}
+  a{color:inherit;text-decoration:none}
+  nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1080px;margin:0 auto;padding:0 32px}
+  .brand{font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px}
+  .brand .dot{color:var(--gold)}
+  .menu{display:flex;gap:30px;align-items:center}
+  .menu a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);position:relative;padding:4px 0;transition:color .25s}
+  .menu a:hover,.menu a.on{color:var(--fg)}
+  .menu a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--gold);transition:width .3s}
+  .menu a:hover::after,.menu a.on::after{width:100%}
+  .tools{display:flex;align-items:center;gap:14px}
+  .langs{display:flex;gap:4px;align-items:center}
+  .lang{display:flex;align-items:center;gap:5px;cursor:pointer;border:1px solid transparent;border-radius:3px;padding:4px 6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--fg-dim);transition:.2s;background:none}
+  .lang:hover{color:var(--fg)}
+  .lang.on{color:var(--fg);border-color:var(--line);background:var(--card)}
+  .lang svg{display:block;border-radius:1px}
+  .theme-btn{cursor:pointer;background:none;border:1px solid var(--line);border-radius:3px;width:32px;height:30px;display:grid;place-items:center;color:var(--fg);transition:.25s}
+  .theme-btn:hover{border-color:var(--gold)}
+  .menu-toggle{display:none}
+
+  .article{max-width:720px;margin:0 auto;padding:0 32px 120px}
+  .back{display:inline-block;margin:40px 0 26px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);transition:.2s}
+  .back:hover{color:var(--gold)}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+  h1{font-size:clamp(34px,5.5vw,52px);line-height:1.08;margin:0 0 18px;font-weight:600;letter-spacing:-.01em}
+  .meta{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim);margin-bottom:8px}
+  .rule{width:54px;height:1px;background:var(--gold);margin:34px 0}
+  .article h2{font-size:25px;font-weight:600;margin:46px 0 14px;letter-spacing:-.01em}
+  .article p{font-size:18px;margin:0 0 20px}
+  .article .lead{font-size:21px;line-height:1.55}
+  .article b{font-weight:500}
+  .cta{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--gold);color:var(--gold);padding:13px 22px;border-radius:3px;transition:.25s}
+  .cta:hover{background:var(--gold);color:var(--bg)}
+
+  figure{margin:30px 0}
+  figure img{width:100%;display:block;border:1px solid var(--line);border-radius:6px;background:var(--card)}
+  figure figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-dim);margin-top:10px;text-align:center}
+  .fig-right{float:right;width:46%;margin:6px 0 22px 30px}
+  .fig-left{float:left;width:46%;margin:6px 30px 22px 0}
+  figure.ph{border:1px dashed var(--line);border-radius:6px;min-height:150px;display:flex;align-items:center;justify-content:center;position:relative}
+  figure.ph img{display:none}
+  figure.ph::before{content:"image: " attr(data-name);font-family:var(--mono);font-size:12px;color:var(--fg-dim)}
+
+  @media(max-width:760px){
+    .menu{position:fixed;inset:64px 0 auto 0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0;transform:translateY(-120%);transition:transform .35s;align-items:stretch}
+    .menu.open{transform:none}
+    .menu a{padding:16px 32px;font-size:13px}.menu a::after{display:none}
+    .menu-toggle{display:grid;place-items:center;background:none;border:1px solid var(--line);border-radius:3px;width:34px;height:30px;cursor:pointer;color:var(--fg)}
+    .langs .code{display:none}
+    .fig-right,.fig-left{float:none;width:100%;margin:30px 0}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-in">
+    <a href="/" class="brand">Marcelo Leal<span class="dot">.</span></a>
+    <div class="menu" id="menu">
+      <a href="/" data-i18n="nav_home">Home</a>
+      <a href="/atlas/" data-i18n="nav_atlas">Atlas</a>
+      <a href="/essays/" class="on" data-i18n="nav_essays">Essays</a>
+      <a href="/#contact" data-i18n="nav_contact">Contact</a>
+    </div>
+    <div class="tools">
+      <div class="langs" id="langs">
+        <button class="lang on" data-lang="en"><svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#3c3b6e"/><g fill="#b22234"><rect y="0" width="18" height="1.33"/><rect y="2.66" width="18" height="1.33"/><rect y="5.33" width="18" height="1.33"/><rect y="8" width="18" height="1.33"/><rect y="10.66" width="18" height="1.33"/></g><rect width="8" height="6.66" fill="#3c3b6e"/></svg><span class="code">EN</span></button>
+        <button class="lang" data-lang="pt"><svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#009b3a"/><path d="M9 1.4 16.4 6 9 10.6 1.6 6Z" fill="#fedf00"/><circle cx="9" cy="6" r="2.4" fill="#002776"/></svg><span class="code">PT</span></button>
+        <button class="lang" data-lang="es"><svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#c60b1e"/><rect y="3" width="18" height="6" fill="#ffc400"/></svg><span class="code">ES</span></button>
+      </div>
+      <button class="theme-btn" id="theme" aria-label="theme">
+        <svg id="ic-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg id="ic-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      </button>
+      <button class="menu-toggle" id="mtoggle" aria-label="menu"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</nav>
+
+<article class="article" id="art-en">
+  <a class="back" href="/essays/">← Essays</a>
+  <div class="kicker">Essay</div>
+  <h1>The AI Atlas: Origins and Motivations</h1>
+  <div class="meta">Marcelo Leal · June 1, 2026</div>
+  <div class="rule"></div>
+
+  <p class="lead">Everyone in AI has information. Almost no one has a map. The field reinvents its vocabulary every few months, and the result is not understanding, it is noise. The AI Atlas is my answer to that noise: one map of the field, where the point is not the words, it is how they connect.</p>
+
+  <h2>A map, not an encyclopedia</h2>
+  <p>An encyclopedia tells you what each thing is. A map tells you how things relate, where they sit, and where the roads break. The Atlas is the second kind. Every idea in AI is a node, and what matters is the line between the nodes.</p>
+
+  <figure data-name="atlas-overview.png">
+    <img src="img/atlas-overview.png" alt="The AI Atlas graph overview">
+    <figcaption>The Atlas: every idea a node, every relationship a line.</figcaption>
+  </figure>
+
+  <p>The value of a field is rarely inside a single concept. It lives in the space between concepts, the place where one idea quietly depends on another, or contradicts it. That space is exactly where most people stop looking. The Atlas exists to make it visible.</p>
+
+  <h2>A grammar for the field</h2>
+  <p>To map a field you need a grammar. Mine has one rule that does most of the work: type classifies, attributes describe. Every node is one of eight types: concept, problem, solution, technique, metric, premise, bridge, constraint.</p>
+
+  <figure class="fig-right" data-name="legend-types.png">
+    <img src="img/legend-types.png" alt="The eight node types and their colors">
+    <figcaption>Eight types. Every idea declares what it is.</figcaption>
+  </figure>
+
+  <p>That sounds bureaucratic. It is the opposite. Forcing every idea to declare what it is exposes the confusion that prose hides. <b>RAG</b> feels like a thing until you ask whether it is an idea, a method, or a way of solving a problem. It is a solution. <b>Knowledge representation</b> feels like a tool until you ask the same question. It is a problem. The grammar does not decorate the field. It disciplines it. Once every node knows what it is, the connections stop lying.</p>
+
+  <h2>What is mine</h2>
+  <p>Two things in the Atlas are not facts. They are my reading, and I mark them as such, because the honest move is to separate what the field agrees on from what I think.</p>
+  <p><b>Maturity</b> is the market's view, not mine: emerging, contested, consolidating, established. It says how settled an idea is out there, and anyone can check it.</p>
+
+  <figure class="fig-left" data-name="card-tension.png">
+    <img src="img/card-tension.png" alt="A node card showing the Tension field">
+    <figcaption>Tension: where something looks settled, but is it.</figcaption>
+  </figure>
+
+  <p><b>Tension</b> is mine. Any node can carry one: the place where something looks settled but is not. It is the question I would put to a consensus that stopped questioning itself. RAG is established, and I still think the way we frame retrieval hides more than it solves. Both are true at once, and the Atlas holds both without flinching.</p>
+  <p>Then there are the <b>bridges</b>, the nodes that connect AI to things outside computing. Forgetting in neuroscience. Antifragility. Operations research. The field treats these as decoration. I treat them as load-bearing, because the best ideas in technology usually arrived from somewhere else first.</p>
+
+  <h2>How to read it</h2>
+  <p>Take one corner of the map and pull the thread.</p>
+
+  <figure data-name="card-rag.png">
+    <img src="img/card-rag.png" alt="The RAG node card with its grouped connections">
+    <figcaption>One node, all its connections, grouped by type.</figcaption>
+  </figure>
+
+  <p><b>Hallucination</b> is a problem: the model states something false with full confidence. Next to it sit three more. <b>Opacity</b>, a constraint: you cannot see why the model answered, so you cannot catch the error from the inside. <b>Grounding lacking</b>, a problem: the answer is not tied to a source you can verify. <b>Context lacking</b>, a problem: the model never had the information to begin with.</p>
+  <p>One solution cuts across all three. <b>RAG</b> fetches knowledge at the moment of the question and feeds it to the model, so the answer can be anchored in something outside the training data. And underneath it, one technique does most of the quiet heavy lifting: <b>reranking</b>, which reorders what retrieval found so the model sees the best evidence first.</p>
+  <p>That is the whole method in miniature. You do not read a definition. You walk from a problem to its constraints, to the solutions that attack it, to the techniques that make those solutions work. The map teaches the relationships, which is precisely the part that definitions leave out.</p>
+
+  <h2>Why I am doing this</h2>
+  <p>Honestly, because it is how I think, and because the field rewards the people who can hold the whole shape in their head while going deep in one corner. The Atlas is both at once: breadth in the graph, depth in each node.</p>
+  <p>It is a study in public, not an official reference. It will be wrong in places. It will change. The readings are mine, and I would rather be precisely wrong and fix it than vaguely right and forget why. The map is the argument.</p>
+  <a class="cta" href="/atlas/">Enter the Atlas →</a>
+</article>
+
+<article class="article" id="art-pt" style="display:none"></article>
+<article class="article" id="art-es" style="display:none"></article>
+
+<script>
+const NAV = {
+  en:{nav_home:"Home",nav_atlas:"Atlas",nav_essays:"Essays",nav_contact:"Contact"},
+  pt:{nav_home:"Início",nav_atlas:"Atlas",nav_essays:"Ensaios",nav_contact:"Contato"},
+  es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_contact:"Contacto"}
+};
+const docEl=document.documentElement;
+// PT/ES start as a copy of EN, ready to be translated later
+const en=document.getElementById("art-en");
+document.getElementById("art-pt").innerHTML=en.innerHTML;
+document.getElementById("art-es").innerHTML=en.innerHTML;
+function setLang(l){
+  ["en","pt","es"].forEach(x=>document.getElementById("art-"+x).style.display = x===l?"block":"none");
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.getAttribute("data-i18n");if(NAV[l][k])el.textContent=NAV[l][k];});
+  document.querySelectorAll(".lang").forEach(b=>b.classList.toggle("on",b.dataset.lang===l));
+  docEl.setAttribute("lang",l);
+}
+document.querySelectorAll(".lang").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+
+const moon=document.getElementById("ic-moon"),sun=document.getElementById("ic-sun");
+function applyTheme(t){docEl.setAttribute("data-theme",t);moon.style.display=t==="dark"?"block":"none";sun.style.display=t==="dark"?"none":"block";}
+let theme="light";
+try{ theme=localStorage.getItem("ml-theme")||"light"; }catch(e){}
+applyTheme(theme);
+document.getElementById("theme").onclick=()=>{theme=docEl.getAttribute("data-theme")==="dark"?"light":"dark";applyTheme(theme);try{localStorage.setItem("ml-theme",theme);}catch(e){}};
+
+const menu=document.getElementById("menu");
+document.getElementById("mtoggle").onclick=()=>menu.classList.toggle("open");
+menu.querySelectorAll("a").forEach(a=>a.onclick=()=>menu.classList.remove("open"));
+
+// placeholder figures: if the image is not there yet, show a labeled box
+document.querySelectorAll("figure img").forEach(img=>{
+  img.addEventListener("error",()=>img.closest("figure").classList.add("ph"));
+});
+</script>
+</body>
+</html>
