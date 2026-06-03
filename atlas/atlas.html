@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas of AI</title>
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --mono:"SFMono-Regular",ui-monospace,"DejaVu Sans Mono",Menlo,Consolas,monospace;
+  }
+  [data-theme="dark"]{
+    --ink:#0b0e17; --ink2:#10131f; --bone:#e9e3d2; --bone-dim:#8a8472;
+    --gold:#c8a24a; --gold-soft:#9c7e3a; --ember:#d9583b; --line:rgba(200,162,74,.18);
+  }
+  [data-theme="light"]{
+    --ink:#f2ece0; --ink2:#e9e2d2; --bone:#1c1a14; --bone-dim:#6d6452;
+    --gold:#9c7521; --gold-soft:#9c7521; --ember:#b8431f; --line:rgba(28,26,20,.16);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--ink);color:var(--bone);font-family:var(--serif);overflow:hidden;transition:background .5s ease,color .5s ease}
+  canvas{display:block;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+
+  .masthead{position:fixed;top:var(--introH,96px);left:32px;z-index:5;pointer-events:none}
+  .masthead h1{margin:0;font-size:15px;letter-spacing:.42em;text-transform:uppercase;font-weight:600;color:var(--bone)}
+  .masthead .rule{width:54px;height:1px;background:var(--gold);margin:9px 0 7px}
+  .masthead p{margin:0;font-style:italic;font-size:13px;color:var(--bone-dim);letter-spacing:.02em}
+  .masthead .back{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-dim);text-decoration:none;pointer-events:auto;transition:.2s}
+  .masthead .back:hover{color:var(--gold)}
+  .intro{position:fixed;top:0;left:0;right:0;z-index:6;box-sizing:border-box;
+    padding:20px 32px 16px 32px;text-align:center;
+    background:var(--ink);border-bottom:1px solid var(--line);
+    font-size:12.5px;line-height:1.6;color:var(--bone-dim);font-style:italic}
+  .intro .in{max-width:760px;margin:0 auto}
+  .intro b{color:var(--bone);font-style:normal;font-weight:500}
+
+  .controls{position:fixed;top:var(--introH,96px);right:32px;z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+  .crow{display:flex;align-items:center;gap:10px}
+  .search{display:flex;align-items:center;background:color-mix(in srgb,var(--ink) 84%,transparent);border:1px solid var(--line);border-radius:2px;backdrop-filter:blur(6px)}
+  .search input{background:transparent;border:0;outline:0;color:var(--bone);font-family:var(--mono);font-size:12px;padding:9px 12px;width:190px;letter-spacing:.04em}
+  .search input::placeholder{color:var(--bone-dim)}
+  .theme-btn{cursor:pointer;background:color-mix(in srgb,var(--ink) 84%,transparent);border:1px solid var(--line);border-radius:2px;width:32px;height:32px;display:grid;place-items:center;color:var(--bone);transition:.25s}
+  .theme-btn:hover{border-color:var(--gold)}
+  .toggle{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-dim);
+    background:color-mix(in srgb,var(--ink) 84%,transparent);border:1px solid var(--line);border-radius:2px;padding:8px 12px;cursor:pointer;user-select:none;transition:.2s}
+  .toggle:hover{color:var(--bone)}
+  .toggle.on{color:var(--ember);border-color:rgba(217,88,59,.5)}
+
+  .legend{position:fixed;left:32px;bottom:26px;z-index:5;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--bone-dim);line-height:2}
+  .legend .row{display:flex;align-items:center;gap:8px}
+  .legend .dot{width:8px;height:8px;border-radius:50%}
+  .footer{position:fixed;right:32px;bottom:26px;z-index:5;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--bone-dim);text-transform:uppercase}
+
+  .panel{position:fixed;top:0;right:0;height:100%;width:380px;max-width:88vw;z-index:8;
+    background:linear-gradient(180deg,var(--ink2),var(--ink));border-left:1px solid var(--line);
+    transform:translateX(102%);transition:transform .42s cubic-bezier(.16,1,.3,1);
+    padding:64px 30px 30px;overflow-y:auto}
+  .panel.open{transform:translateX(0)}
+  .panel .close{position:absolute;top:22px;right:24px;cursor:pointer;color:var(--bone-dim);font-family:var(--mono);font-size:18px;line-height:1}
+  .panel .close:hover{color:var(--bone)}
+  .panel .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+  .panel h2{margin:0 0 16px;font-size:27px;line-height:1.12;font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+  .chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--bone);
+    border:1px solid var(--line);border-radius:2px;padding:4px 8px}
+  .chip .chip-k{color:var(--bone-dim);margin-right:5px}
+  .tension{border:1px solid rgba(217,88,59,.45);background:rgba(217,88,59,.07);border-radius:3px;padding:14px 15px;margin-bottom:22px}
+  .tension .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ember);margin-bottom:7px}
+  .tension p{margin:0;font-style:italic;font-size:14.5px;line-height:1.5;color:var(--bone)}
+  .tension .tq{font-style:italic;font-size:12.5px;color:var(--bone-dim);margin:0 0 8px}
+  .panel h2 .tdot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:9px;vertical-align:middle}
+  .cgroup{margin-bottom:16px}
+  .cgroup .chead{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-dim);margin-bottom:7px}
+  .cgroup .gdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .cgroup ul{margin:0;padding-left:0;list-style:none}
+  .cgroup li{margin-bottom:5px}
+  .sec{margin-bottom:20px}
+  .sec .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:9px}
+  .sec ul{margin:0;padding-left:16px}
+  .sec li{font-size:14px;line-height:1.5;margin-bottom:6px;color:var(--bone)}
+  .sec a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--line)}
+  .sec a:hover{border-color:var(--gold)}
+  a.xref{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--line);cursor:pointer}
+  a.xref:hover{border-color:var(--gold)}
+  .empty{color:var(--bone-dim);font-style:italic;font-size:13px}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="masthead">
+  <h1>Atlas of AI</h1>
+  <div class="rule"></div>
+  <p>from the cloud to the ground: present, premises, gaps</p>
+  <a class="back" href="/">← Home</a>
+</div>
+
+<div class="intro"><div class="in">An evolving map of AI: its concepts, premises, constraints, and implementation techniques. Where they may or may not hold. The map itself is a study in public, not an official reference, and all the readings are mine. It grew out of designing and building <b>Ilumia</b> (a commercial B2C/B2B product) at <b>IFÁ Insights</b>, a multimodal RAG SaaS delivered over messaging systems (WhatsApp, Telegram, Slack) with an SDR built in.</div></div>
+
+<div class="controls">
+  <div class="crow">
+    <div class="search"><input id="q" placeholder="search node..." autocomplete="off"></div>
+    <button class="theme-btn" id="theme" aria-label="theme">
+      <svg id="ic-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      <svg id="ic-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+    </button>
+  </div>
+  <div class="toggle" id="tensionBtn">tensions only</div>
+</div>
+
+<div class="legend" id="legend"></div>
+<div class="footer">v0.25 (0803a69) · 2026-06-03</div>
+
+<aside class="panel" id="panel">
+  <div class="close" id="close">✕</div>
+  <div class="kicker" id="p-kicker"></div>
+  <h2 id="p-title"></h2>
+  <div class="chips" id="p-chips"></div>
+  <div id="p-tension"></div>
+  <div id="p-connections"></div>
+  <div class="sec" id="p-sources"></div>
+</aside>
+
+<script>
+const GRAPH = {"nodes": [{"id": "ontology", "title": "Ontology", "type": "solution", "has_tension": true}, {"id": "text", "title": "Text", "type": "concept", "has_tension": false}, {"id": "cosine-similarity", "title": "Cosine Similarity", "type": "technique", "has_tension": false}, {"id": "opacity", "title": "Opacity", "type": "constraint", "has_tension": false}, {"id": "grounding-lacking", "title": "Grounding Lacking", "type": "problem", "has_tension": false}, {"id": "memory-is-database", "title": "Memory Is a Database", "type": "premise", "has_tension": true}, {"id": "vector-search", "title": "Vector Search", "type": "technique", "has_tension": true}, {"id": "rag", "title": "RAG", "type": "solution", "has_tension": true}, {"id": "transformer", "title": "Transformer", "type": "technique", "has_tension": true}, {"id": "reasoning", "title": "Reasoning", "type": "concept", "has_tension": true}, {"id": "inference", "title": "Inference", "type": "concept", "has_tension": false}, {"id": "ann", "title": "ANN", "type": "technique", "has_tension": false}, {"id": "language-is-reasoning", "title": "Language = Reasoning", "type": "premise", "has_tension": true}, {"id": "agi", "title": "AGI", "type": "concept", "has_tension": true}, {"id": "bridge-operations-research", "title": "Bridge: Operations Research", "type": "bridge", "has_tension": false}, {"id": "energy", "title": "Energy", "type": "constraint", "has_tension": false}, {"id": "neural-network", "title": "Neural Network", "type": "concept", "has_tension": false}, {"id": "reranking", "title": "Reranking", "type": "technique", "has_tension": true}, {"id": "mcp", "title": "MCP", "type": "solution", "has_tension": false}, {"id": "memory-poisoning", "title": "Memory Poisoning", "type": "problem", "has_tension": false}, {"id": "embeddings", "title": "Embeddings", "type": "technique", "has_tension": true}, {"id": "not-measurable", "title": "Measurability", "type": "constraint", "has_tension": false}, {"id": "scale", "title": "Scale", "type": "constraint", "has_tension": false}, {"id": "deep-learning", "title": "Deep Learning", "type": "concept", "has_tension": false}, {"id": "generative-ai", "title": "Generative AI", "type": "concept", "has_tension": false}, {"id": "multi-hop-reasoning", "title": "Multi-hop Reasoning", "type": "problem", "has_tension": true}, {"id": "video", "title": "Video", "type": "concept", "has_tension": false}, {"id": "staleness", "title": "Staleness", "type": "problem", "has_tension": true}, {"id": "benchmarks-measure-intelligence", "title": "Benchmarks Measure Intelligence", "type": "premise", "has_tension": true}, {"id": "more-is-better", "title": "More Is Better", "type": "premise", "has_tension": true}, {"id": "hallucination", "title": "Hallucination", "type": "problem", "has_tension": true}, {"id": "proxy-misalignment", "title": "Proxy Misalignment", "type": "constraint", "has_tension": false}, {"id": "cost", "title": "Cost", "type": "constraint", "has_tension": false}, {"id": "knowledge-representation", "title": "Knowledge Representation", "type": "problem", "has_tension": false}, {"id": "lora", "title": "LoRA", "type": "technique", "has_tension": false}, {"id": "ai-agents", "title": "AI Agents", "type": "concept", "has_tension": true}, {"id": "semantic-model", "title": "Semantic Model", "type": "technique", "has_tension": false}, {"id": "bridge-human-forgetting", "title": "Bridge: Human Forgetting", "type": "bridge", "has_tension": true}, {"id": "multi-agent", "title": "Multi-agent Systems", "type": "concept", "has_tension": true}, {"id": "knowledge-graph", "title": "Knowledge Graph", "type": "technique", "has_tension": true}, {"id": "recall-at-k", "title": "Recall@k", "type": "metric", "has_tension": false}, {"id": "context-lacking", "title": "Context Lacking", "type": "problem", "has_tension": false}, {"id": "speech", "title": "Speech", "type": "concept", "has_tension": false}, {"id": "tool-use", "title": "Tool Use", "type": "technique", "has_tension": false}, {"id": "context-window", "title": "Context Window", "type": "concept", "has_tension": false}, {"id": "benchmark", "title": "Benchmark", "type": "metric", "has_tension": false}, {"id": "reliability", "title": "Reliability", "type": "constraint", "has_tension": false}, {"id": "vector-database", "title": "Vector Database", "type": "technique", "has_tension": false}, {"id": "agentic-rag", "title": "Agentic RAG", "type": "solution", "has_tension": false}, {"id": "pretraining", "title": "Pretraining", "type": "technique", "has_tension": false}, {"id": "alignment", "title": "Alignment", "type": "concept", "has_tension": true}, {"id": "bridge-antifragility", "title": "Bridge: Antifragility", "type": "bridge", "has_tension": false}, {"id": "interpretability", "title": "Interpretability", "type": "problem", "has_tension": false}, {"id": "memory", "title": "Memory", "type": "problem", "has_tension": true}, {"id": "vision", "title": "Vision", "type": "concept", "has_tension": false}, {"id": "latency", "title": "Latency", "type": "constraint", "has_tension": false}, {"id": "hybrid-search", "title": "Hybrid Search", "type": "solution", "has_tension": false}, {"id": "bm25", "title": "BM25", "type": "technique", "has_tension": false}, {"id": "similarity-equals-relevance", "title": "Similarity = Relevance", "type": "premise", "has_tension": true}, {"id": "chunking", "title": "Chunking", "type": "technique", "has_tension": true}, {"id": "fine-tuning", "title": "Fine-tuning", "type": "solution", "has_tension": true}, {"id": "attention", "title": "Attention", "type": "technique", "has_tension": false}, {"id": "post-training", "title": "Post-training", "type": "technique", "has_tension": false}, {"id": "foundation-model", "title": "Foundation Model", "type": "concept", "has_tension": false}, {"id": "llm", "title": "LLM", "type": "concept", "has_tension": true}, {"id": "observability", "title": "Observability", "type": "technique", "has_tension": false}, {"id": "tokenization", "title": "Tokenization", "type": "technique", "has_tension": false}, {"id": "nearest-neighbor", "title": "Nearest Neighbor", "type": "concept", "has_tension": false}, {"id": "scaling-hypothesis", "title": "Scaling Hypothesis", "type": "premise", "has_tension": true}, {"id": "perplexity", "title": "Perplexity", "type": "metric", "has_tension": false}, {"id": "forgetting-is-bad", "title": "Forgetting Is Bad", "type": "premise", "has_tension": true}, {"id": "entity-resolution", "title": "Entity Resolution", "type": "problem", "has_tension": true}, {"id": "structure-helps-reasoning", "title": "Structure Helps Reasoning", "type": "premise", "has_tension": true}, {"id": "plan-and-execute", "title": "Plan and Execute", "type": "technique", "has_tension": false}, {"id": "quantization", "title": "Quantization", "type": "technique", "has_tension": false}, {"id": "graphrag", "title": "GraphRAG", "type": "solution", "has_tension": true}, {"id": "bridge-hermeticism-correspondence", "title": "Bridge: Hermeticism (Correspondence)", "type": "bridge", "has_tension": false}, {"id": "reflection", "title": "Reflection", "type": "technique", "has_tension": false}, {"id": "error-propagation", "title": "Error Propagation", "type": "constraint", "has_tension": false}, {"id": "react-pattern", "title": "ReAct", "type": "technique", "has_tension": true}, {"id": "machine-learning", "title": "Machine Learning", "type": "concept", "has_tension": false}, {"id": "artificial-intelligence", "title": "Artificial Intelligence", "type": "concept", "has_tension": true}, {"id": "long-context", "title": "Long Context", "type": "problem", "has_tension": true}, {"id": "multimodal", "title": "Multimodal AI", "type": "concept", "has_tension": true}, {"id": "rlhf", "title": "RLHF", "type": "solution", "has_tension": true}, {"id": "security", "title": "Security", "type": "constraint", "has_tension": false}, {"id": "evaluation", "title": "Evaluation", "type": "problem", "has_tension": true}, {"id": "chain-of-thought", "title": "Chain of Thought", "type": "technique", "has_tension": false}], "edges": [{"source": "ontology", "target": "knowledge-graph"}, {"source": "ontology", "target": "bridge-hermeticism-correspondence"}, {"source": "ontology", "target": "bridge-operations-research"}, {"source": "ontology", "target": "knowledge-representation"}, {"source": "ontology", "target": "structure-helps-reasoning"}, {"source": "ontology", "target": "reliability"}, {"source": "ontology", "target": "semantic-model"}, {"source": "ontology", "target": "graphrag"}, {"source": "ontology", "target": "entity-resolution"}, {"source": "text", "target": "multimodal"}, {"source": "text", "target": "llm"}, {"source": "text", "target": "tokenization"}, {"source": "text", "target": "video"}, {"source": "text", "target": "speech"}, {"source": "text", "target": "vision"}, {"source": "cosine-similarity", "target": "embeddings"}, {"source": "cosine-similarity", "target": "vector-search"}, {"source": "cosine-similarity", "target": "ann"}, {"source": "cosine-similarity", "target": "nearest-neighbor"}, {"source": "cosine-similarity", "target": "similarity-equals-relevance"}, {"source": "opacity", "target": "hallucination"}, {"source": "opacity", "target": "not-measurable"}, {"source": "opacity", "target": "evaluation"}, {"source": "opacity", "target": "interpretability"}, {"source": "grounding-lacking", "target": "rag"}, {"source": "grounding-lacking", "target": "context-lacking"}, {"source": "grounding-lacking", "target": "hallucination"}, {"source": "memory-is-database", "target": "bridge-human-forgetting"}, {"source": "memory-is-database", "target": "knowledge-graph"}, {"source": "memory-is-database", "target": "structure-helps-reasoning"}, {"source": "memory-is-database", "target": "memory"}, {"source": "vector-search", "target": "recall-at-k"}, {"source": "vector-search", "target": "chunking"}, {"source": "vector-search", "target": "embeddings"}, {"source": "vector-search", "target": "ann"}, {"source": "vector-search", "target": "nearest-neighbor"}, {"source": "vector-search", "target": "hybrid-search"}, {"source": "vector-search", "target": "vector-database"}, {"source": "vector-search", "target": "multi-hop-reasoning"}, {"source": "vector-search", "target": "bm25"}, {"source": "rag", "target": "chunking"}, {"source": "rag", "target": "recall-at-k"}, {"source": "rag", "target": "embeddings"}, {"source": "rag", "target": "vector-search"}, {"source": "rag", "target": "context-lacking"}, {"source": "rag", "target": "knowledge-representation"}, {"source": "rag", "target": "reliability"}, {"source": "rag", "target": "hybrid-search"}, {"source": "rag", "target": "vector-database"}, {"source": "rag", "target": "fine-tuning"}, {"source": "rag", "target": "graphrag"}, {"source": "rag", "target": "hallucination"}, {"source": "rag", "target": "reranking"}, {"source": "rag", "target": "agentic-rag"}, {"source": "rag", "target": "bm25"}, {"source": "transformer", "target": "neural-network"}, {"source": "transformer", "target": "llm"}, {"source": "transformer", "target": "scale"}, {"source": "transformer", "target": "foundation-model"}, {"source": "transformer", "target": "attention"}, {"source": "transformer", "target": "deep-learning"}, {"source": "reasoning", "target": "chain-of-thought"}, {"source": "reasoning", "target": "llm"}, {"source": "reasoning", "target": "artificial-intelligence"}, {"source": "reasoning", "target": "language-is-reasoning"}, {"source": "reasoning", "target": "agi"}, {"source": "reasoning", "target": "multi-hop-reasoning"}, {"source": "inference", "target": "cost"}, {"source": "inference", "target": "latency"}, {"source": "inference", "target": "llm"}, {"source": "inference", "target": "quantization"}, {"source": "ann", "target": "vector-database"}, {"source": "ann", "target": "nearest-neighbor"}, {"source": "language-is-reasoning", "target": "chain-of-thought"}, {"source": "language-is-reasoning", "target": "llm"}, {"source": "agi", "target": "benchmarks-measure-intelligence"}, {"source": "agi", "target": "artificial-intelligence"}, {"source": "agi", "target": "scaling-hypothesis"}, {"source": "agi", "target": "not-measurable"}, {"source": "bridge-operations-research", "target": "multi-hop-reasoning"}, {"source": "bridge-operations-research", "target": "plan-and-execute"}, {"source": "bridge-operations-research", "target": "scale"}, {"source": "energy", "target": "artificial-intelligence"}, {"source": "energy", "target": "cost"}, {"source": "energy", "target": "scale"}, {"source": "neural-network", "target": "attention"}, {"source": "neural-network", "target": "deep-learning"}, {"source": "reranking", "target": "hybrid-search"}, {"source": "reranking", "target": "vector-search"}, {"source": "reranking", "target": "recall-at-k"}, {"source": "reranking", "target": "hallucination"}, {"source": "mcp", "target": "ai-agents"}, {"source": "mcp", "target": "tool-use"}, {"source": "memory-poisoning", "target": "security"}, {"source": "memory-poisoning", "target": "memory"}, {"source": "embeddings", "target": "knowledge-representation"}, {"source": "embeddings", "target": "nearest-neighbor"}, {"source": "embeddings", "target": "vector-database"}, {"source": "embeddings", "target": "similarity-equals-relevance"}, {"source": "embeddings", "target": "tokenization"}, {"source": "not-measurable", "target": "benchmarks-measure-intelligence"}, {"source": "not-measurable", "target": "benchmark"}, {"source": "not-measurable", "target": "evaluation"}, {"source": "scale", "target": "cost"}, {"source": "scale", "target": "reliability"}, {"source": "scale", "target": "error-propagation"}, {"source": "scale", "target": "multi-agent"}, {"source": "scale", "target": "ai-agents"}, {"source": "scale", "target": "more-is-better"}, {"source": "scale", "target": "latency"}, {"source": "deep-learning", "target": "machine-learning"}, {"source": "generative-ai", "target": "multimodal"}, {"source": "generative-ai", "target": "llm"}, {"source": "generative-ai", "target": "artificial-intelligence"}, {"source": "multi-hop-reasoning", "target": "graphrag"}, {"source": "multi-hop-reasoning", "target": "agentic-rag"}, {"source": "video", "target": "multimodal"}, {"source": "video", "target": "llm"}, {"source": "staleness", "target": "reliability"}, {"source": "staleness", "target": "llm"}, {"source": "staleness", "target": "memory"}, {"source": "benchmarks-measure-intelligence", "target": "evaluation"}, {"source": "benchmarks-measure-intelligence", "target": "benchmark"}, {"source": "more-is-better", "target": "cost"}, {"source": "more-is-better", "target": "context-window"}, {"source": "more-is-better", "target": "long-context"}, {"source": "more-is-better", "target": "memory"}, {"source": "more-is-better", "target": "scaling-hypothesis"}, {"source": "more-is-better", "target": "multi-agent"}, {"source": "more-is-better", "target": "ai-agents"}, {"source": "hallucination", "target": "context-lacking"}, {"source": "hallucination", "target": "llm"}, {"source": "proxy-misalignment", "target": "rlhf"}, {"source": "proxy-misalignment", "target": "alignment"}, {"source": "cost", "target": "quantization"}, {"source": "cost", "target": "long-context"}, {"source": "cost", "target": "ai-agents"}, {"source": "cost", "target": "memory"}, {"source": "cost", "target": "graphrag"}, {"source": "cost", "target": "multi-agent"}, {"source": "cost", "target": "react-pattern"}, {"source": "cost", "target": "reasoning"}, {"source": "cost", "target": "latency"}, {"source": "knowledge-representation", "target": "knowledge-graph"}, {"source": "knowledge-representation", "target": "structure-helps-reasoning"}, {"source": "knowledge-representation", "target": "semantic-model"}, {"source": "lora", "target": "fine-tuning"}, {"source": "lora", "target": "post-training"}, {"source": "lora", "target": "quantization"}, {"source": "ai-agents", "target": "plan-and-execute"}, {"source": "ai-agents", "target": "tool-use"}, {"source": "ai-agents", "target": "memory"}, {"source": "ai-agents", "target": "error-propagation"}, {"source": "ai-agents", "target": "multi-agent"}, {"source": "ai-agents", "target": "react-pattern"}, {"source": "ai-agents", "target": "security"}, {"source": "ai-agents", "target": "reasoning"}, {"source": "ai-agents", "target": "reflection"}, {"source": "ai-agents", "target": "agentic-rag"}, {"source": "semantic-model", "target": "knowledge-graph"}, {"source": "semantic-model", "target": "structure-helps-reasoning"}, {"source": "bridge-human-forgetting", "target": "forgetting-is-bad"}, {"source": "bridge-human-forgetting", "target": "memory"}, {"source": "bridge-human-forgetting", "target": "bridge-antifragility"}, {"source": "multi-agent", "target": "error-propagation"}, {"source": "knowledge-graph", "target": "cost"}, {"source": "knowledge-graph", "target": "structure-helps-reasoning"}, {"source": "knowledge-graph", "target": "graphrag"}, {"source": "knowledge-graph", "target": "entity-resolution"}, {"source": "recall-at-k", "target": "benchmark"}, {"source": "recall-at-k", "target": "evaluation"}, {"source": "context-lacking", "target": "context-window"}, {"source": "context-lacking", "target": "long-context"}, {"source": "context-lacking", "target": "memory"}, {"source": "speech", "target": "multimodal"}, {"source": "speech", "target": "llm"}, {"source": "tool-use", "target": "react-pattern"}, {"source": "context-window", "target": "long-context"}, {"source": "context-window", "target": "llm"}, {"source": "context-window", "target": "memory"}, {"source": "benchmark", "target": "perplexity"}, {"source": "benchmark", "target": "evaluation"}, {"source": "reliability", "target": "bridge-antifragility"}, {"source": "reliability", "target": "evaluation"}, {"source": "reliability", "target": "ai-agents"}, {"source": "agentic-rag", "target": "graphrag"}, {"source": "agentic-rag", "target": "react-pattern"}, {"source": "pretraining", "target": "foundation-model"}, {"source": "pretraining", "target": "fine-tuning"}, {"source": "pretraining", "target": "post-training"}, {"source": "pretraining", "target": "llm"}, {"source": "alignment", "target": "rlhf"}, {"source": "alignment", "target": "artificial-intelligence"}, {"source": "alignment", "target": "interpretability"}, {"source": "bridge-antifragility", "target": "scale"}, {"source": "memory", "target": "forgetting-is-bad"}, {"source": "memory", "target": "vector-search"}, {"source": "memory", "target": "graphrag"}, {"source": "memory", "target": "security"}, {"source": "memory", "target": "latency"}, {"source": "vision", "target": "multimodal"}, {"source": "vision", "target": "llm"}, {"source": "latency", "target": "quantization"}, {"source": "latency", "target": "ai-agents"}, {"source": "hybrid-search", "target": "bm25"}, {"source": "similarity-equals-relevance", "target": "vector-search"}, {"source": "similarity-equals-relevance", "target": "nearest-neighbor"}, {"source": "chunking", "target": "embeddings"}, {"source": "fine-tuning", "target": "cost"}, {"source": "fine-tuning", "target": "post-training"}, {"source": "fine-tuning", "target": "opacity"}, {"source": "fine-tuning", "target": "llm"}, {"source": "fine-tuning", "target": "foundation-model"}, {"source": "post-training", "target": "foundation-model"}, {"source": "post-training", "target": "rlhf"}, {"source": "foundation-model", "target": "generative-ai"}, {"source": "foundation-model", "target": "llm"}, {"source": "llm", "target": "perplexity"}, {"source": "llm", "target": "memory"}, {"source": "llm", "target": "scaling-hypothesis"}, {"source": "llm", "target": "tokenization"}, {"source": "observability", "target": "ai-agents"}, {"source": "observability", "target": "reliability"}, {"source": "observability", "target": "cost"}, {"source": "observability", "target": "evaluation"}, {"source": "scaling-hypothesis", "target": "artificial-intelligence"}, {"source": "perplexity", "target": "evaluation"}, {"source": "forgetting-is-bad", "target": "more-is-better"}, {"source": "entity-resolution", "target": "graphrag"}, {"source": "structure-helps-reasoning", "target": "graphrag"}, {"source": "plan-and-execute", "target": "react-pattern"}, {"source": "bridge-hermeticism-correspondence", "target": "knowledge-representation"}, {"source": "reflection", "target": "react-pattern"}, {"source": "error-propagation", "target": "react-pattern"}, {"source": "react-pattern", "target": "chain-of-thought"}, {"source": "machine-learning", "target": "neural-network"}, {"source": "machine-learning", "target": "artificial-intelligence"}, {"source": "artificial-intelligence", "target": "benchmarks-measure-intelligence"}, {"source": "artificial-intelligence", "target": "opacity"}, {"source": "artificial-intelligence", "target": "ai-agents"}, {"source": "artificial-intelligence", "target": "knowledge-representation"}, {"source": "artificial-intelligence", "target": "multimodal"}, {"source": "artificial-intelligence", "target": "deep-learning"}, {"source": "long-context", "target": "transformer"}, {"source": "long-context", "target": "reliability"}, {"source": "long-context", "target": "memory"}, {"source": "long-context", "target": "attention"}, {"source": "multimodal", "target": "llm"}, {"source": "rlhf", "target": "fine-tuning"}, {"source": "chain-of-thought", "target": "llm"}]};
+const TYPE_COLOR = {
+  concept:"#c8a24a", problem:"#d9583b", solution:"#5b8fb0",
+  technique:"#7da87d", metric:"#b08fc0", premise:"#b8985a", bridge:"#d4b483",
+  constraint:"#6c7a89"
+};
+const colorOf = n => TYPE_COLOR[n.type] || "#c8a24a";
+
+function themeColors(){
+  const light = document.documentElement.getAttribute('data-theme')==='light';
+  return light ? {
+    star:"#bcae90", edge:"rgba(120,95,40,.20)", edgeDim:"rgba(150,130,70,.05)", edgeSel:"rgba(150,115,30,.55)",
+    nodeStroke:"rgba(242,236,224,.95)", label:"#1c1a14",
+    hover:"rgba(28,26,20,.12)", tGlow:"rgba(28,26,20,.12)", tRing:"rgba(40,36,26,.85)"
+  } : {
+    star:"#cfd6e6", edge:"rgba(200,162,74,.16)", edgeDim:"rgba(200,162,74,.04)", edgeSel:"rgba(200,162,74,.5)",
+    nodeStroke:"rgba(11,14,23,.9)", label:"#e9e3d2",
+    hover:"rgba(233,227,210,.16)", tGlow:"rgba(233,227,210,.16)", tRing:"rgba(233,227,210,.9)"
+  };
+}
+
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+let W=0,H=0,DPR=1,TOP=0;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W*DPR; cv.height = H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const intro=document.querySelector('.intro');
+  TOP = intro ? intro.offsetHeight : 0;
+  document.documentElement.style.setProperty('--introH', (TOP+18)+'px');
+}
+window.addEventListener('resize', resize); resize();
+
+const STARS = Array.from({length:160}, ()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.1+.2,a:Math.random()*.5+.15}));
+
+const nodes = GRAPH.nodes.map((n,i)=>({...n,
+  x: W/2 + Math.cos(i)*180 + (Math.random()-.5)*60,
+  y: (TOP+H)/2 + Math.sin(i)*180 + (Math.random()-.5)*60, vx:0, vy:0}));
+const idx = Object.fromEntries(nodes.map((n,i)=>[n.id,i]));
+const edges = GRAPH.edges.map(e=>({s:idx[e.source],t:idx[e.target]})).filter(e=>e.s!=null&&e.t!=null);
+
+let scale=1, ox=0, oy=0;
+const sx = n => n.x*scale+ox, sy = n => n.y*scale+oy;
+function radius(n){ return (5 + n.degree*1.4 + (n.has_tension?2.5:0)); }
+const deg={}; edges.forEach(e=>{deg[e.s]=(deg[e.s]||0)+1;deg[e.t]=(deg[e.t]||0)+1;});
+nodes.forEach((n,i)=>n.degree = deg[i]||0);
+
+let dragNode=null;
+function step(){
+  for(let i=0;i<nodes.length;i++){
+    const a=nodes[i];
+    for(let j=i+1;j<nodes.length;j++){
+      const b=nodes[j]; let dx=a.x-b.x, dy=a.y-b.y; let d2=dx*dx+dy*dy||.01;
+      const f=2600/d2; const d=Math.sqrt(d2);
+      a.vx+=dx/d*f; a.vy+=dy/d*f; b.vx-=dx/d*f; b.vy-=dy/d*f;
+    }
+  }
+  edges.forEach(e=>{
+    const a=nodes[e.s], b=nodes[e.t];
+    let dx=b.x-a.x, dy=b.y-a.y, d=Math.sqrt(dx*dx+dy*dy)||.01;
+    const f=(d-120)*0.012;
+    a.vx+=dx/d*f; a.vy+=dy/d*f; b.vx-=dx/d*f; b.vy-=dy/d*f;
+  });
+  nodes.forEach(n=>{
+    n.vx+=(W/2-n.x)*0.0009; n.vy+=((TOP+H)/2-n.y)*0.0009;
+    if(n===dragNode) return;
+    n.vx*=.86; n.vy*=.86; n.x+=n.vx; n.y+=n.vy;
+  });
+}
+
+let hover=null, selected=null, onlyTension=false, query="";
+function visible(n){
+  if(onlyTension && !n.has_tension) return false;
+  if(query && !n.title.toLowerCase().includes(query)) return false;
+  return true;
+}
+
+function draw(){
+  step();
+  const c=themeColors();
+  ctx.clearRect(0,0,W,H);
+  STARS.forEach(s=>{ctx.globalAlpha=s.a;ctx.fillStyle=c.star;ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,7);ctx.fill();});
+  ctx.globalAlpha=1;
+  edges.forEach(e=>{
+    const a=nodes[e.s], b=nodes[e.t];
+    const dim = (query||onlyTension) && !(visible(a)&&visible(b));
+    ctx.strokeStyle = dim ? c.edgeDim : c.edge;
+    if(selected && (nodes[e.s]===selected||nodes[e.t]===selected)) ctx.strokeStyle=c.edgeSel;
+    ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(sx(a),sy(a));ctx.lineTo(sx(b),sy(b));ctx.stroke();
+  });
+  nodes.forEach(n=>{
+    const r=radius(n)*Math.sqrt(scale), x=sx(n), y=sy(n);
+    const vis=visible(n), dim=(query||onlyTension)&&!vis;
+    ctx.globalAlpha = dim?.18:1;
+    if(n.has_tension){
+      const g=ctx.createRadialGradient(x,y,r,x,y,r+10);
+      g.addColorStop(0,c.tGlow);g.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r+10,0,7);ctx.fill();
+      ctx.strokeStyle=c.tRing;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(x,y,r+3.5,0,7);ctx.stroke();
+    }
+    if(n===hover||n===selected){
+      ctx.fillStyle=c.hover;ctx.beginPath();ctx.arc(x,y,r+7,0,7);ctx.fill();
+    }
+    ctx.fillStyle=colorOf(n);ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+    ctx.strokeStyle=c.nodeStroke;ctx.lineWidth=1.4;ctx.stroke();
+    if(scale>.78 || n===hover || n===selected){
+      ctx.globalAlpha=dim?.25:.92;
+      ctx.fillStyle=c.label;ctx.font="13px Georgia, serif";ctx.textAlign="center";
+      ctx.fillText(n.title, x, y+r+15);
+    }
+    ctx.globalAlpha=1;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+function nodeAt(mx,my){
+  for(let i=nodes.length-1;i>=0;i--){const n=nodes[i];
+    const r=radius(n)*Math.sqrt(scale)+6;
+    if((mx-sx(n))**2+(my-sy(n))**2<r*r) return n;}
+  return null;
+}
+let panning=false, px=0,py=0, moved=false;
+cv.addEventListener('mousemove',e=>{
+  const mx=e.clientX,my=e.clientY;
+  if(dragNode){dragNode.x=(mx-ox)/scale;dragNode.y=(my-oy)/scale;moved=true;return;}
+  if(panning){ox+=mx-px;oy+=my-py;px=mx;py=my;moved=true;return;}
+  hover=nodeAt(mx,my); cv.style.cursor=hover?'pointer':'grab';
+});
+cv.addEventListener('mousedown',e=>{
+  const n=nodeAt(e.clientX,e.clientY);moved=false;
+  if(n){dragNode=n;} else {panning=true;px=e.clientX;py=e.clientY;cv.classList.add('dragging');}
+});
+window.addEventListener('mouseup',()=>{
+  if(dragNode&&!moved) openPanel(dragNode);
+  else if(panning&&!moved){closePanel();}
+  dragNode=null;panning=false;cv.classList.remove('dragging');
+});
+cv.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const f=e.deltaY<0?1.12:0.89, mx=e.clientX,my=e.clientY;
+  ox=mx-(mx-ox)*f; oy=my-(my-oy)*f; scale*=f; scale=Math.max(.35,Math.min(3.2,scale));
+},{passive:false});
+
+
+function tpos(t){return {x:t.clientX,y:t.clientY};}
+let pinch=0;
+cv.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){
+    const p=tpos(e.touches[0]); const n=nodeAt(p.x,p.y); moved=false;
+    if(n){dragNode=n;} else {panning=true;px=p.x;py=p.y;}
+  } else if(e.touches.length===2){
+    dragNode=null;panning=false;
+    const a=tpos(e.touches[0]),b=tpos(e.touches[1]); pinch=Math.hypot(a.x-b.x,a.y-b.y);
+  }
+},{passive:false});
+cv.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(e.touches.length===1){
+    const p=tpos(e.touches[0]);
+    if(dragNode){dragNode.x=(p.x-ox)/scale;dragNode.y=(p.y-oy)/scale;moved=true;}
+    else if(panning){ox+=p.x-px;oy+=p.y-py;px=p.x;py=p.y;moved=true;}
+  } else if(e.touches.length===2){
+    const a=tpos(e.touches[0]),b=tpos(e.touches[1]);
+    const d=Math.hypot(a.x-b.x,a.y-b.y), mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+    if(pinch){const f=d/pinch; ox=mx-(mx-ox)*f; oy=my-(my-oy)*f; scale*=f; scale=Math.max(.35,Math.min(3.2,scale));}
+    pinch=d; moved=true;
+  }
+},{passive:false});
+cv.addEventListener('touchend',e=>{
+  if(e.touches.length===0){
+    if(dragNode&&!moved) openPanel(dragNode);
+    else if(panning&&!moved) closePanel();
+    dragNode=null;panning=false;pinch=0;
+  }
+},{passive:false});
+
+const $=id=>document.getElementById(id);
+const NODE_API="https://atlas-nodes.msleal.workers.dev";
+const detailCache={};
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+// turn [[id]] or [[id|label]] into a clickable cross-reference (only if the node exists)
+function linkify(s){
+  return escapeHtml(s).replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (m, id, label) => {
+    id = id.trim(); label = (label || id).trim();
+    if (idx[id] == null) return label;            // unknown target: just show the text
+    return `<a class="xref" data-id="${escapeHtml(id)}">${escapeHtml(label)}</a>`;
+  });
+}
+function renderConnections(el, conns){
+  if(!conns || !conns.length){ el.innerHTML=""; return; }
+  const groups={};
+  for(const c of conns){ (groups[c.type]=groups[c.type]||[]).push(c); }
+  const order=Object.keys(groups).sort();
+  el.innerHTML = order.map(type=>{
+    const color=TYPE_COLOR[type]||"#c8a24a";
+    const items=groups[type].map(c=>`<li><a class="xref" data-id="${escapeHtml(c.id)}">${escapeHtml(c.title)}</a></li>`).join("");
+    return `<div class="cgroup"><div class="chead"><span class="gdot" style="background:${color}"></span>${type}</div><ul>${items}</ul></div>`;
+  }).join("");
+}
+function renderDetail(n,d){
+  const type=d.type||n.type;
+  $('p-kicker').textContent=type;
+  $('p-title').innerHTML=`<span class="tdot" style="background:${TYPE_COLOR[type]||'#c8a24a'}"></span>${escapeHtml(d.title||n.title)}`;
+  $('p-chips').innerHTML = d.maturity
+    ? `<span class="chip"><span class="chip-k">maturity</span> ${escapeHtml(d.maturity)}</span>` : "";
+  $('p-tension').innerHTML=(d.tension||"").trim()
+    ? `<div class="tension"><div class="lbl">Tension</div><p class="tq">Looks settled. But is it?</p><p>${linkify(d.tension)}</p></div>` : "";
+  renderConnections($('p-connections'), d.connections);
+  const f=$('p-sources');
+  if(d.sources&&d.sources.length)
+    f.innerHTML=`<div class="lbl">sources</div><ul>${d.sources.map(s=>`<li><a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.title)}</a></li>`).join("")}</ul>`;
+  else f.innerHTML=`<div class="lbl">sources</div><div class="empty">—</div>`;
+}
+function showLoading(n){
+  $('p-kicker').textContent=n.type;
+  $('p-title').innerHTML=`<span class="tdot" style="background:${TYPE_COLOR[n.type]||'#c8a24a'}"></span>${escapeHtml(n.title)}`;
+  $('p-chips').innerHTML="";
+  $('p-tension').innerHTML="";
+  $('p-connections').innerHTML=`<div class="empty">loading…</div>`;
+  $('p-sources').innerHTML="";
+}
+async function openPanel(n){
+  selected=n;
+  $('panel').classList.add('open');
+  if(detailCache[n.id]){ renderDetail(n,detailCache[n.id]); return; }
+  showLoading(n);
+  try{
+    const res=await fetch(`${NODE_API}?id=${encodeURIComponent(n.id)}`);
+    const d=res.ok ? await res.json() : {};
+    detailCache[n.id]=d;
+    if(selected===n) renderDetail(n,d);
+  }catch(e){
+    if(selected===n){ $('p-connections').innerHTML=`<div class="empty">could not load detail</div>`; }
+  }
+}
+function closePanel(){selected=null;$('panel').classList.remove('open');}
+$('close').onclick=closePanel;
+
+// clicking a cross-reference inside the panel swaps to that node, in place
+$('panel').addEventListener('click',e=>{
+  const a=e.target.closest('a.xref'); if(!a) return;
+  e.preventDefault();
+  const id=a.getAttribute('data-id');
+  if(idx[id]!=null) openPanel(nodes[idx[id]]);
+});
+
+$('q').addEventListener('input',e=>query=e.target.value.trim().toLowerCase());
+$('tensionBtn').addEventListener('click',e=>{onlyTension=!onlyTension;e.target.classList.toggle('on',onlyTension);});
+
+$('legend').innerHTML = Object.entries(TYPE_COLOR).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>
+  `<div class="row"><span class="dot" style="background:${v}"></span>${k}</div>`).join("")
+  + `<div class="row" style="margin-top:12px;align-items:center">`
+  + `<span class="dot" style="background:transparent;border:1.5px solid var(--bone);box-shadow:none;margin-top:3px;flex:0 0 auto"></span>`
+  + `<span style="color:var(--bone-dim)">Note: a ring marks an open tension, where a premise looks settled but isn't.</span></div>`;
+
+// deep-link: atlas.html#agent-memory opens the node directly
+window.openPanelById = id => { if(idx[id]!=null) openPanel(nodes[idx[id]]); };
+function fromHash(){ const h=decodeURIComponent(location.hash.replace('#','')); if(h) window.openPanelById(h); }
+window.addEventListener('hashchange',fromHash);
+setTimeout(fromHash,300);
+
+// theme: light by default, remembers choice, shared with the home (same origin)
+const docEl=document.documentElement, moon=document.getElementById('ic-moon'), sun=document.getElementById('ic-sun');
+function applyTheme(t){
+  docEl.setAttribute('data-theme',t);
+  moon.style.display = t==='dark' ? 'block':'none';
+  sun.style.display  = t==='dark' ? 'none':'block';
+}
+let theme='light';
+try{ theme = localStorage.getItem('ml-theme') || 'light'; }catch(e){}
+applyTheme(theme);
+document.getElementById('theme').onclick=()=>{
+  theme = docEl.getAttribute('data-theme')==='dark' ? 'light':'dark';
+  applyTheme(theme);
+  try{ localStorage.setItem('ml-theme',theme); }catch(e){}
+};
+</script>
+</body>
+</html>
