@@ -102,7 +102,7 @@
   <p class="lead">Everyone in AI has information. Almost no one has a map. The field reinvents its vocabulary every few months, and the result is not understanding, it is noise. The AI Atlas is my answer to that noise: one map of the field, where the point is not the words, it is how they connect.</p>
 
   <h2>A map, not an encyclopedia</h2>
-  <p>An encyclopedia tells you what each thing is. A map tells you how things relate, where they sit, and where the roads break. The Atlas is the second kind. Every idea in AI is a node, and what matters is the line between the nodes.</p>
+  <p>An encyclopedia tells you what each thing is. A map tells you how things relate, where they sit, and where the roads break. The Atlas is the second kind. Every idea in AI is a node, and what matters is the line between them.</p>
 
   <figure data-name="atlas-overview.png">
     <img src="img/atlas-overview.png" alt="The AI Atlas graph overview">
@@ -119,7 +119,7 @@
     <figcaption>Eight types. Every idea declares what it is.</figcaption>
   </figure>
 
-  <p>That sounds bureaucratic. It is the opposite. Forcing every idea to declare what it is exposes the confusion that prose hides. <b>RAG</b> feels like a thing until you ask whether it is an idea, a method, or a way of solving a problem. It is a solution. <b>Knowledge representation</b> feels like a tool until you ask the same question. It is a problem. The grammar does not decorate the field. It disciplines it. Once every node knows what it is, the connections stop lying.</p>
+  <p>That sounds bureaucratic. It is the opposite. Forcing every idea to declare what it is exposes the confusion that prose hides. <b>RAG</b> feels like a thing until you ask whether it is an idea, a method, or a way of solving a problem. It is the later. <b>Knowledge representation</b> feels like a tool until you ask the same question. Again, and again. Then, it shows itself: it is a problem. The grammar does not decorate the field. It disciplines it. Once every node knows what it is, the connections stop lying.</p>
 
   <h2>What is mine</h2>
   <p>Two things in the Atlas are not facts. They are my reading, and I mark them as such, because the honest move is to separate what the field agrees on from what I think.</p>
@@ -131,7 +131,7 @@
   </figure>
 
   <p><b>Tension</b> is mine. Any node can carry one: the place where something looks settled but is not. It is the question I would put to a consensus that stopped questioning itself. RAG is established, and I still think the way we frame retrieval hides more than it solves. Both are true at once, and the Atlas holds both without flinching.</p>
-  <p>Then there are the <b>bridges</b>, the nodes that connect AI to things outside computing. Forgetting in neuroscience. Antifragility. Operations research. The field treats these as decoration. I treat them as load-bearing, because the best ideas in technology usually arrived from somewhere else first.</p>
+  <p>Then there are the <b>bridges</b>, the nodes that connect AI to things outside computing. Forgetting in neuroscience. Ontology as philosophy. The field treats these as decoration. I treat them as load-bearing, because the best ideas in technology usually arrived from somewhere else first.</p>
 
   <h2>How to read it</h2>
   <p>Take one corner of the map and pull the thread.</p>
@@ -141,12 +141,12 @@
     <figcaption>One node, all its connections, grouped by type.</figcaption>
   </figure>
 
-  <p><b>Hallucination</b> is a problem: the model states something false with full confidence. Next to it sit three more. <b>Opacity</b>, a constraint: you cannot see why the model answered, so you cannot catch the error from the inside. <b>Grounding lacking</b>, a problem: the answer is not tied to a source you can verify. <b>Context lacking</b>, a problem: the model never had the information to begin with.</p>
+  <p><b>Hallucination</b> is a problem: the model states something false with full confidence. Next to it sit three more. <b>Opacity</b>, a constraint: you cannot see why the model answered, so you cannot catch the error from the inside. <b>Grounding lacking</b>, a problem: the answer is not tied to a source you can verify. <b>Context lacking</b>, also a problem: the model never had the information to begin with.</p>
   <p>One solution cuts across all three. <b>RAG</b> fetches knowledge at the moment of the question and feeds it to the model, so the answer can be anchored in something outside the training data. And underneath it, one technique does most of the quiet heavy lifting: <b>reranking</b>, which reorders what retrieval found so the model sees the best evidence first.</p>
-  <p>That is the whole method in miniature. You do not read a definition. You walk from a problem to its constraints, to the solutions that attack it, to the techniques that make those solutions work. The map teaches the relationships, which is precisely the part that definitions leave out.</p>
+  <p>That is the whole atlas method in miniature. You do not read a definition. You walk from a problem to its constraints, to the solutions that attack it, to the techniques that make those solutions work. The map teaches the relationships, which is precisely the part that definitions leave out.</p>
 
   <h2>Why I am doing this</h2>
-  <p>Honestly, because it is how I think, and because the field rewards the people who can hold the whole shape in their head while going deep in one corner. The Atlas is both at once: breadth in the graph, depth in each node.</p>
+  <p>Honestly, because it is how I think and learn, and because the field rewards the people who can hold the whole shape in their head while going deep in one corner. The Atlas is both at once: breadth in the graph, depth in each node.</p>
   <p>It is a study in public, not an official reference. It will be wrong in places. It will change. The readings are mine, and I would rather be precisely wrong and fix it than vaguely right and forget why. The map is the argument.</p>
   <a class="cta" href="/atlas/">Enter the Atlas →</a>
 </article>
