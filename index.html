@@ -82,6 +82,10 @@
   .contact h2{font-size:clamp(34px,6vw,60px);margin:0 0 30px;font-weight:600}
 
   footer{border-top:1px solid var(--line);padding:38px 0}
+  .hero-share{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin:0 0 46px}
+  .hero-share .hs-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-right:4px}
+  .hero-share .sbtn{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--gold);border-radius:3px;padding:9px 16px;cursor:pointer;text-decoration:none;transition:.2s}
+  .hero-share .sbtn:hover{background:var(--gold);color:var(--bg)}
   .foot-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
   .foot-in .note{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--fg-dim)}
   .social{display:flex;gap:22px}
@@ -134,7 +138,14 @@
 <header class="hero">
   <canvas id="stars"></canvas>
   <div class="wrap">
-    <div class="kicker reveal d1" data-i18n="kicker">Systems Architecture · Cloud Computing · Artificial Intelligence</div>
+    <div class="hero-share reveal d1">
+      <span class="hs-label" data-i18n="share">Share</span>
+      <a class="sbtn" id="sh-x" target="_blank" rel="noopener">X</a>
+      <a class="sbtn" id="sh-li" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="sbtn" id="sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="sbtn" id="sh-copy" data-i18n="copy">Copy link</button>
+    </div>
+    <div class="kicker reveal d2" data-i18n="kicker">Systems Architecture · Cloud Computing · Artificial Intelligence</div>
     <h1 class="reveal d2" data-i18n="headline">Complex Systems</h1>
     <p class="role reveal d3" data-i18n="role">I connect what usually stays apart.</p>
     <p class="lede reveal d4" data-i18n="lede">Twenty years in cloud and enterprise technology. I work at the edge where engineering, strategy, and ideas meet. My method is simple. I look for the place where a field quietly agreed on a tradeoff that did not have to be made, and I look again.</p>
@@ -202,7 +213,7 @@ const I18N = {
     f1t:"Enterprise architecture",f1d:"Cloud and data systems built to last under load.",
     f2t:"Knowledge and AI",f2d:"Turning the mess of information into structure machines can use.",
     f3t:"Cross-domain thinking",f3d:"Bridging the technical, the philosophical, and the practical.",
-    contact_h:"Let us talk.",contact_b:"Get in touch",foot:"Built and maintained by Marcelo Leal."},
+    contact_h:"Let us talk.",contact_b:"Get in touch",foot:"Built and maintained by Marcelo Leal.",share:"Share",copy:"Copy link"},
   pt:{nav_home:"Início",nav_atlas:"Atlas",nav_essays:"Ensaios",nav_contact:"Contato",
     kicker:"Arquitetura de Sistemas · Computação em Nuvem · Inteligência Artificial",headline:"Sistemas Complexos",principle_label:"Princípio",statement:"Desenvolvo pessoas e negócios, nessa ordem.",role:"Eu conecto o que costuma ficar separado.",
     lede:"Vinte anos em tecnologia de nuvem e corporativa. Trabalho na fronteira onde engenharia, estratégia e ideias se encontram. Meu método é simples. Procuro o ponto onde um campo aceitou em silêncio um trade-off que não precisava aceitar, e olho de novo.",
@@ -212,7 +223,7 @@ const I18N = {
     f1t:"Arquitetura corporativa",f1d:"Sistemas de nuvem e dados feitos pra aguentar carga.",
     f2t:"Conhecimento e IA",f2d:"Transformar o caos da informação em estrutura que a máquina usa.",
     f3t:"Pensamento entre domínios",f3d:"Ligar o técnico, o filosófico e o prático.",
-    contact_h:"Vamos conversar.",contact_b:"Fale comigo",foot:"Feito e mantido por Marcelo Leal."},
+    contact_h:"Vamos conversar.",contact_b:"Fale comigo",foot:"Feito e mantido por Marcelo Leal.",share:"Compartilhar",copy:"Copiar link"},
   es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_contact:"Contacto",
     kicker:"Arquitectura de Sistemas · Computación en la Nube · Inteligencia Artificial",headline:"Sistemas Complejos",principle_label:"Principio",statement:"Desarrollo personas y negocios, en ese orden.",role:"Conecto lo que suele quedar separado.",
     lede:"Veinte años en tecnología de nube y empresarial. Trabajo en la frontera donde la ingeniería, la estrategia y las ideas se encuentran. Mi método es simple. Busco el punto donde un campo aceptó en silencio un compromiso que no hacía falta aceptar, y lo miro de nuevo.",
@@ -222,7 +233,7 @@ const I18N = {
     f1t:"Arquitectura empresarial",f1d:"Sistemas de nube y datos hechos para aguantar carga.",
     f2t:"Conocimiento e IA",f2d:"Convertir el caos de la información en estructura que la máquina usa.",
     f3t:"Pensamiento entre dominios",f3d:"Unir lo técnico, lo filosófico y lo práctico.",
-    contact_h:"Hablemos.",contact_b:"Contáctame",foot:"Hecho y mantenido por Marcelo Leal."}
+    contact_h:"Hablemos.",contact_b:"Contáctame",foot:"Hecho y mantenido por Marcelo Leal.",share:"Compartir",copy:"Copiar enlace"}
 };
 const docEl=document.documentElement;
 function setLang(l){
@@ -265,6 +276,15 @@ menu.querySelectorAll("a").forEach(a=>a.onclick=()=>menu.classList.remove("open"
   setInterval(()=>{S.forEach(s=>s.a+=(Math.random()-.5)*.04);d();},120);
 })();
 
+
+// share buttons: build intents from the current page url + title
+(function(){
+  const u=encodeURIComponent(location.href), t=encodeURIComponent(document.title);
+  const x=document.getElementById('sh-x'); if(x) x.href=`https://twitter.com/intent/tweet?text=${t}&url=${u}`;
+  const li=document.getElementById('sh-li'); if(li) li.href=`https://www.linkedin.com/sharing/share-offsite/?url=${u}`;
+  const wa=document.getElementById('sh-wa'); if(wa) wa.href=`https://wa.me/?text=${t}%20${u}`;
+  const c=document.getElementById('sh-copy'); if(c) c.addEventListener('click',()=>{navigator.clipboard.writeText(location.href).then(()=>{const o=c.textContent;c.textContent='\u2713';setTimeout(()=>c.textContent=o,1500);});});
+})();
 </script>
 </body>
 </html>
