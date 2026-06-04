@@ -47,6 +47,10 @@
   .article b{font-weight:500}
   .cta{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--gold);color:var(--gold);padding:13px 22px;border-radius:3px;transition:.25s}
   .cta:hover{background:var(--gold);color:var(--bg)}
+  .eshare{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 34px}
+  .eshare .hs-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-right:2px}
+  .eshare .sbtn{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--gold);border-radius:3px;padding:8px 14px;cursor:pointer;text-decoration:none;transition:.2s}
+  .eshare .sbtn:hover{background:var(--gold);color:var(--bg)}
 
   figure{margin:30px 0}
   figure img{max-width:100%;height:auto;display:block;margin:0 auto;border:1px solid var(--line);border-radius:6px;background:var(--card)}
@@ -98,6 +102,13 @@
   <h1>The Atlas Of AI: Origins and Motivations</h1>
   <div class="meta">Marcelo Leal · June 1, 2026</div>
   <div class="rule"></div>
+  <div class="eshare">
+    <span class="hs-label">Share</span>
+    <a class="sbtn sh-x" target="_blank" rel="noopener">X</a>
+    <a class="sbtn sh-li" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="sbtn sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+    <button class="sbtn sh-copy">Copy link</button>
+  </div>
 
   <p class="lead">Everyone in AI has information. Almost no one has a map. The field reinvents its vocabulary every few months, and the result is not understanding, it is noise. The Atlas Of AI is my answer to that noise: one map of the field, where the point is not the words, it is how they connect.</p>
 
@@ -157,6 +168,13 @@
   <h1>O Atlas da IA: Origens e Motivações</h1>
   <div class="meta">Marcelo Leal · 1 de junho de 2026</div>
   <div class="rule"></div>
+  <div class="eshare">
+    <span class="hs-label">Compartilhar</span>
+    <a class="sbtn sh-x" target="_blank" rel="noopener">X</a>
+    <a class="sbtn sh-li" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="sbtn sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+    <button class="sbtn sh-copy">Copiar link</button>
+  </div>
 
   <p class="lead">Todo mundo em IA tem informação. Quase ninguém tem um mapa. O campo reinventa o próprio vocabulário a cada poucos meses, e o resultado não é entendimento, é ruído. O Atlas da IA é a minha resposta a esse ruído: um mapa do campo, onde o que importa não são as palavras, é como elas se conectam.</p>
 
@@ -215,6 +233,13 @@
   <h1>El Atlas de la IA: Orígenes y Motivaciones</h1>
   <div class="meta">Marcelo Leal · 1 de junio de 2026</div>
   <div class="rule"></div>
+  <div class="eshare">
+    <span class="hs-label">Compartir</span>
+    <a class="sbtn sh-x" target="_blank" rel="noopener">X</a>
+    <a class="sbtn sh-li" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="sbtn sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+    <button class="sbtn sh-copy">Copiar enlace</button>
+  </div>
 
   <p class="lead">Todos en IA tienen información. Casi nadie tiene un mapa. El campo reinventa su vocabulario cada pocos meses, y el resultado no es comprensión, es ruido. El Atlas de la IA es mi respuesta a ese ruido: un mapa del campo, donde lo que importa no son las palabras, es cómo se conectan.</p>
 
@@ -298,6 +323,15 @@ menu.querySelectorAll("a").forEach(a=>a.onclick=()=>menu.classList.remove("open"
 document.querySelectorAll("figure img").forEach(img=>{
   img.addEventListener("error",()=>img.closest("figure").classList.add("ph"));
 });
+
+// share buttons (class-based so it works across the en/pt/es blocks)
+(function(){
+  const u=encodeURIComponent(location.href), t=encodeURIComponent(document.title);
+  document.querySelectorAll(".sh-x").forEach(a=>a.href=`https://twitter.com/intent/tweet?text=${t}&url=${u}`);
+  document.querySelectorAll(".sh-li").forEach(a=>a.href=`https://www.linkedin.com/sharing/share-offsite/?url=${u}`);
+  document.querySelectorAll(".sh-wa").forEach(a=>a.href=`https://wa.me/?text=${t}%20${u}`);
+  document.querySelectorAll(".sh-copy").forEach(c=>c.addEventListener("click",()=>{navigator.clipboard.writeText(location.href).then(()=>{const o=c.textContent;c.textContent="\u2713";setTimeout(()=>c.textContent=o,1500);});}));
+})();
 </script>
 </body>
 </html>

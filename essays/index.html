@@ -47,6 +47,10 @@
   .essay h2{font-size:28px;margin:0 0 12px;font-weight:600}
   .essay p{margin:0 0 14px;font-size:16.5px;opacity:.88;max-width:64ch}
   .essay .more{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+  .eshare{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .eshare .hs-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-right:2px}
+  .eshare .sbtn{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--gold);border-radius:3px;padding:8px 14px;cursor:pointer;text-decoration:none;transition:.2s}
+  .eshare .sbtn:hover{background:var(--gold);color:var(--bg)}
 
   @media(max-width:760px){
     .menu{position:fixed;inset:64px 0 auto 0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0;transform:translateY(-120%);transition:transform .35s;align-items:stretch}
@@ -87,6 +91,13 @@
     <div class="kicker" data-i18n="kicker">Essays</div>
     <h1 data-i18n="title">Essays</h1>
     <p class="lead">Long-form writing from the edge of technology, systems and knowledge. Fewer pieces, each one dense, most growing out of the <a href="/atlas/" style="color:var(--gold);border-bottom:1px solid var(--line)">Atlas of AI</a>.</p>
+    <div class="eshare">
+      <span class="hs-label" data-i18n="share">Share</span>
+      <a class="sbtn" id="sh-x" target="_blank" rel="noopener">X</a>
+      <a class="sbtn" id="sh-li" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="sbtn" id="sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="sbtn" id="sh-copy" data-i18n="copy">Copy link</button>
+    </div>
   </div>
 </header>
 
@@ -109,21 +120,21 @@ const I18N = {
     e1_meta:"Marcelo Leal · June 1, 2026",
     e1_title:"The Atlas Of AI: Origins and Motivations",
     e1_excerpt:"Why I am mapping the field of AI as a living graph of concepts, premises, constraints and tensions: what the Atlas is, how it is built, and how to read it.",
-    read:"Read →"},
+    read:"Read →",share:"Share",copy:"Copy link"},
   pt:{nav_home:"Início",nav_atlas:"Atlas",nav_essays:"Ensaios",nav_contact:"Contato",
     kicker:"Essays",title:"Essays",
     lead:"Long-form writing from the edge of technology, systems and knowledge. Fewer pieces, each one dense, most growing out of the Atlas of AI.",
     e1_meta:"Marcelo Leal · June 1, 2026",
     e1_title:"The Atlas Of AI: Origins and Motivations",
     e1_excerpt:"Why I am mapping the field of AI as a living graph of concepts, premises, constraints and tensions: what the Atlas is, how it is built, and how to read it.",
-    read:"Read →"},
+    read:"Read →",share:"Compartilhar",copy:"Copiar link"},
   es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_contact:"Contacto",
     kicker:"Essays",title:"Essays",
     lead:"Long-form writing from the edge of technology, systems and knowledge. Fewer pieces, each one dense, most growing out of the Atlas of AI.",
     e1_meta:"Marcelo Leal · June 1, 2026",
     e1_title:"The Atlas Of AI: Origins and Motivations",
     e1_excerpt:"Why I am mapping the field of AI as a living graph of concepts, premises, constraints and tensions: what the Atlas is, how it is built, and how to read it.",
-    read:"Read →"}
+    read:"Read →",share:"Compartir",copy:"Copiar enlace"}
 };
 const docEl=document.documentElement;
 function setLang(l){
@@ -143,6 +154,14 @@ document.getElementById("theme").onclick=()=>{theme=docEl.getAttribute("data-the
 const menu=document.getElementById("menu");
 document.getElementById("mtoggle").onclick=()=>menu.classList.toggle("open");
 menu.querySelectorAll("a").forEach(a=>a.onclick=()=>menu.classList.remove("open"));
+
+(function(){
+  const u=encodeURIComponent(location.href), t=encodeURIComponent(document.title);
+  const x=document.getElementById("sh-x"); if(x) x.href=`https://twitter.com/intent/tweet?text=${t}&url=${u}`;
+  const li=document.getElementById("sh-li"); if(li) li.href=`https://www.linkedin.com/sharing/share-offsite/?url=${u}`;
+  const wa=document.getElementById("sh-wa"); if(wa) wa.href=`https://wa.me/?text=${t}%20${u}`;
+  const c=document.getElementById("sh-copy"); if(c) c.addEventListener("click",()=>{navigator.clipboard.writeText(location.href).then(()=>{const o=c.textContent;c.textContent="\u2713";setTimeout(()=>c.textContent=o,1500);});});
+})();
 </script>
 </body>
 </html>
