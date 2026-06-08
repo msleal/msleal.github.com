@@ -50,11 +50,11 @@
   /* hero */
   header.hero{position:relative;padding:120px 0 90px;overflow:hidden}
   #stars{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:.9;pointer-events:none}
-  .hero .wrap{position:relative;z-index:1}
+  .hero .wrap{position:relative;z-index:1;text-align:center}
   .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:26px}
   h1{font-size:clamp(48px,8.5vw,96px);line-height:.96;margin:0 0 24px;font-weight:600;letter-spacing:-.015em}
-  .role{font-size:clamp(20px,3vw,28px);font-style:italic;color:var(--fg);margin:0 0 28px;max-width:18ch}
-  .lede{font-size:18px;max-width:none;color:var(--fg);opacity:.92;margin:0}
+  .role{font-size:clamp(20px,3vw,28px);font-style:italic;color:var(--fg);margin:0 auto 28px;max-width:18ch}
+  .lede{margin-left:auto;margin-right:auto;font-size:18px;max-width:none;color:var(--fg);opacity:.92;margin:0}
   .rule{width:60px;height:1px;background:var(--gold);margin:34px 0 0}
 
   /* atlas feature */
@@ -62,14 +62,25 @@
   .statement{text-align:center;padding:92px 0}
   .statement .st-label{font-family:var(--mono);font-size:11px;letter-spacing:.30em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
   .statement .st-text{font-size:clamp(28px,4.6vw,48px);line-height:1.16;font-weight:600;margin:0 auto;max-width:20ch}
-  .sec-label{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:30px}
+  .sec-label{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:30px;text-align:center}
   .feature{display:block}
-  .feature .card{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:48px;position:relative;overflow:hidden;max-width:660px;margin:0 auto;text-align:center}
+  .feature .card{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:48px;position:relative;overflow:hidden;width:100%;display:flex;flex-direction:column;text-align:center}
   .feature h2{font-size:38px;margin:0 0 16px;font-weight:600}
-  .feature p{font-size:17px;margin:0 0 28px;opacity:.9}
+  .feature p{font-size:17px;margin:0 0 28px;opacity:.9;flex:1}
   .cta{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
     border:1px solid var(--gold);color:var(--gold);padding:13px 22px;border-radius:3px;transition:.25s}
   .cta:hover{background:var(--gold);color:var(--bg)}
+  .feature .cta{align-self:center}
+  .feature{position:relative;max-width:660px;margin:0 auto}
+  .carousel{position:relative;overflow:hidden;border-radius:5px}
+  .track{display:flex;transition:transform .5s ease}
+  .slide{flex:0 0 100%;min-width:100%;display:flex}
+  .car-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 78%,transparent);color:var(--fg);cursor:pointer;display:grid;place-items:center;font-family:var(--mono);font-size:15px;transition:.2s}
+  .car-arrow:hover{border-color:var(--gold);color:var(--gold)}
+  .car-arrow.prev{left:10px}.car-arrow.next{right:10px}
+  .dots{display:flex;justify-content:center;gap:9px;margin-top:22px}
+  .dot{width:8px;height:8px;border-radius:50%;border:0;background:var(--line);cursor:pointer;padding:0;transition:.2s}
+  .dot.on{background:var(--gold);transform:scale(1.3)}
 
   /* focus */
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
@@ -115,6 +126,7 @@
       <a href="#top" data-i18n="nav_home">Home</a>
       <a href="atlas/" data-i18n="nav_atlas">Atlas</a>
       <a href="essays/" data-i18n="nav_essays">Essays</a>
+      <a href="framework/" data-i18n="nav_framework">Framework</a>
       <a href="#contact" data-i18n="nav_contact">Contact</a>
     </div>
     <div class="tools">
@@ -163,11 +175,30 @@
 <section id="essays">
   <div class="wrap">
     <div class="sec-label" data-i18n="featured">Featured work</div>
-    <div class="feature">
-      <div class="card">
-        <h2 data-i18n="atlas_title">The Atlas of AI</h2>
-        <p data-i18n="atlas_desc">An evolving map of AI: its concepts, premises, constraints, and implementation techniques. Where they may or may not hold. The map itself is a study in public, not an official reference, and all the readings are mine. It grew out of designing and building Ilumia (a commercial B2C/B2B product) at IFÁ Insights, a multimodal RAG SaaS delivered over messaging systems (WhatsApp, Telegram, Slack) with an SDR built in.</p>
-        <a class="cta" href="atlas/"><span data-i18n="atlas_cta">Enter the Atlas</span> →</a>
+    <div class="feature" id="feature">
+      <button class="car-arrow prev" id="car-prev" aria-label="previous">←</button>
+      <button class="car-arrow next" id="car-next" aria-label="next">→</button>
+      <div class="carousel"><div class="track" id="track">
+        <div class="slide"><div class="card">
+          <h2 data-i18n="atlas_title">The Atlas of AI</h2>
+          <p data-i18n="atlas_desc">An evolving map of AI: its concepts, premises, constraints, and implementation techniques. Where they may or may not hold. The map itself is a study in public, not an official reference, and all the readings are mine. It grew out of designing and building Ilumia (a commercial B2C/B2B product) at IFÁ Insights, a multimodal RAG SaaS delivered over messaging systems (WhatsApp, Telegram, Slack) with an SDR built in.</p>
+          <a class="cta" href="atlas/"><span data-i18n="atlas_cta">Enter the Atlas</span> →</a>
+        </div></div>
+        <div class="slide"><div class="card">
+          <h2 data-i18n="fw_title">The AI Framework</h2>
+          <p data-i18n="fw_desc">A working model for taking AI from intent to production: the capabilities a business needs, the layers that deliver them, and the constraints that bound them all. Not a generic maturity chart. It grows out of operating-model work across industries and hands-on AI implementation, structured the way I actually think about delivery, and like everything here it stays a work in progress, mine to navigate and reshape as the field moves.</p>
+          <a class="cta" href="framework/"><span data-i18n="fw_cta">Open the framework</span> →</a>
+        </div></div>
+        <div class="slide"><div class="card">
+          <h2 data-i18n="ess_title">Essays</h2>
+          <p data-i18n="ess_desc">Long-form writing from the edge of technology, systems and knowledge. Fewer pieces, each one dense, most growing out of the Atlas of AI. This is where I go deeper than a node allows: a problem, a bridge, an idea worth the argument. Written to think in public, and to be wrong precisely rather than vaguely right.</p>
+          <a class="cta" href="essays/"><span data-i18n="ess_cta">Read the essays</span> →</a>
+        </div></div>
+      </div></div>
+      <div class="dots" id="dots">
+        <button class="dot on" aria-label="1"></button>
+        <button class="dot" aria-label="2"></button>
+        <button class="dot" aria-label="3"></button>
       </div>
     </div>
   </div>
@@ -204,31 +235,31 @@
 
 <script>
 const I18N = {
-  en:{nav_home:"Home",nav_atlas:"Atlas",nav_essays:"Essays",nav_contact:"Contact",
+  en:{nav_home:"Home",nav_atlas:"Atlas",nav_essays:"Essays",nav_framework:"Framework",nav_contact:"Contact",
     kicker:"Systems Architecture · Cloud Computing · Artificial Intelligence",headline:"Complex Systems",principle_label:"Principle",statement:"Develop people and businesses, in that order.",role:"I connect what usually stays apart.",
     lede:"Twenty years in cloud and enterprise technology. I work at the edge where engineering, strategy, and ideas meet. My method is simple. I look for the place where a field quietly agreed on a tradeoff that did not have to be made, and I look again.",
     featured:"Featured work",atlas_title:"The Atlas of AI",
-    atlas_desc:"An evolving map of AI: its concepts, premises, constraints, and implementation techniques. Where they may or may not hold. The map itself is a study in public, not an official reference, and all the readings are mine. It grew out of designing and building Ilumia (a commercial B2C/B2B product) at IFÁ Insights, a multimodal RAG SaaS delivered over messaging systems (WhatsApp, Telegram, Slack) with an SDR built in.",
+    atlas_desc:"An evolving map of AI: its concepts, premises, constraints, and implementation techniques. Where they may or may not hold. The map itself is a study in public, not an official reference, and all the readings are mine. It grew out of designing and building Ilumia (a commercial B2C/B2B product) at IFÁ Insights, a multimodal RAG SaaS delivered over messaging systems (WhatsApp, Telegram, Slack) with an SDR built in.",fw_title:"The AI Framework",fw_desc:"A working model for taking AI from intent to production: the capabilities a business needs, the layers that deliver them, and the constraints that bound them all. Not a generic maturity chart. It grows out of operating-model work across industries and hands-on AI implementation, structured the way I actually think about delivery, and like everything here it stays a work in progress, mine to navigate and reshape as the field moves.",fw_cta:"Open the framework",ess_title:"Essays",ess_desc:"Long-form writing from the edge of technology, systems and knowledge. Fewer pieces, each one dense, most growing out of the Atlas of AI. This is where I go deeper than a node allows: a problem, a bridge, an idea worth the argument. Written to think in public, and to be wrong precisely rather than vaguely right.",ess_cta:"Read the essays",
     atlas_cta:"Enter the Atlas",focus:"What I do",
     f1t:"Enterprise architecture",f1d:"Cloud and data systems built to last under load.",
     f2t:"Knowledge and AI",f2d:"Turning the mess of information into structure machines can use.",
     f3t:"Cross-domain thinking",f3d:"Bridging the technical, the philosophical, and the practical.",
     contact_h:"Let us talk.",contact_b:"Get in touch",foot:"Built and maintained by Marcelo Leal.",share:"Share",copy:"Copy link"},
-  pt:{nav_home:"Início",nav_atlas:"Atlas",nav_essays:"Ensaios",nav_contact:"Contato",
+  pt:{nav_home:"Início",nav_atlas:"Atlas",nav_essays:"Ensaios",nav_framework:"Framework",nav_contact:"Contato",
     kicker:"Arquitetura de Sistemas · Computação em Nuvem · Inteligência Artificial",headline:"Sistemas Complexos",principle_label:"Princípio",statement:"Desenvolvo pessoas e negócios, nessa ordem.",role:"Eu conecto o que costuma ficar separado.",
     lede:"Vinte anos em tecnologia de nuvem e corporativa. Trabalho na fronteira onde engenharia, estratégia e ideias se encontram. Meu método é simples. Procuro o ponto onde um campo aceitou em silêncio um trade-off que não precisava aceitar, e olho de novo.",
     featured:"Trabalho em destaque",atlas_title:"O Atlas da IA",
-    atlas_desc:"Um mapa em evolução da IA: seus conceitos, premissas, restrições e técnicas de implementação. Onde elas podem ou não se sustentar. O mapa em si é um estudo em público, não uma referência oficial, e todas as leituras são minhas. Nasceu da concepção e construção da Ilumia (um produto comercial B2C/B2B) na IFÁ Insights, um SaaS de RAG multimodal entregue por sistemas de mensagens (WhatsApp, Telegram, Slack) com um SDR embutido.",
+    atlas_desc:"Um mapa em evolução da IA: seus conceitos, premissas, restrições e técnicas de implementação. Onde elas podem ou não se sustentar. O mapa em si é um estudo em público, não uma referência oficial, e todas as leituras são minhas. Nasceu da concepção e construção da Ilumia (um produto comercial B2C/B2B) na IFÁ Insights, um SaaS de RAG multimodal entregue por sistemas de mensagens (WhatsApp, Telegram, Slack) com um SDR embutido.",fw_title:"O Framework de IA",fw_desc:"Um modelo de trabalho para levar a IA da intenção à produção: as capacidades que o negócio precisa, as camadas que as entregam e as restrições que limitam tudo. Não é um quadro genérico de maturidade. Nasce de trabalho com modelos operacionais em diferentes indústrias e de implementação prática de IA, estruturado do jeito que eu de fato penso a entrega, e como tudo aqui segue um trabalho em andamento, meu para navegar e remodelar conforme o campo se move.",fw_cta:"Abrir o framework",ess_title:"Ensaios",ess_desc:"Textos longos da fronteira entre tecnologia, sistemas e conhecimento. Poucas peças, cada uma densa, a maioria nascendo do Atlas da IA. É onde eu vou mais fundo do que um nó permite: um problema, uma ponte, uma ideia que merece o argumento. Escrito para pensar em público, e para errar com precisão em vez de acertar de forma vaga.",ess_cta:"Ler os ensaios",
     atlas_cta:"Entrar no Atlas",focus:"O que eu faço",
     f1t:"Arquitetura corporativa",f1d:"Sistemas de nuvem e dados feitos pra aguentar carga.",
     f2t:"Conhecimento e IA",f2d:"Transformar o caos da informação em estrutura que a máquina usa.",
     f3t:"Pensamento entre domínios",f3d:"Ligar o técnico, o filosófico e o prático.",
     contact_h:"Vamos conversar.",contact_b:"Fale comigo",foot:"Feito e mantido por Marcelo Leal.",share:"Compartilhar",copy:"Copiar link"},
-  es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_contact:"Contacto",
+  es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_framework:"Framework",nav_contact:"Contacto",
     kicker:"Arquitectura de Sistemas · Computación en la Nube · Inteligencia Artificial",headline:"Sistemas Complejos",principle_label:"Principio",statement:"Desarrollo personas y negocios, en ese orden.",role:"Conecto lo que suele quedar separado.",
     lede:"Veinte años en tecnología de nube y empresarial. Trabajo en la frontera donde la ingeniería, la estrategia y las ideas se encuentran. Mi método es simple. Busco el punto donde un campo aceptó en silencio un compromiso que no hacía falta aceptar, y lo miro de nuevo.",
     featured:"Trabajo destacado",atlas_title:"El Atlas de la IA",
-    atlas_desc:"Un mapa en evolución de la IA: sus conceptos, premisas, restricciones y técnicas de implementación. Donde pueden o no sostenerse. El mapa en sí es un estudio en público, no una referencia oficial, y todas las lecturas son mías. Nació del diseño y la construcción de Ilumia (un producto comercial B2C/B2B) en IFÁ Insights, un SaaS de RAG multimodal entregado por sistemas de mensajería (WhatsApp, Telegram, Slack) con un SDR integrado.",
+    atlas_desc:"Un mapa en evolución de la IA: sus conceptos, premisas, restricciones y técnicas de implementación. Donde pueden o no sostenerse. El mapa en sí es un estudio en público, no una referencia oficial, y todas las lecturas son mías. Nació del diseño y la construcción de Ilumia (un producto comercial B2C/B2B) en IFÁ Insights, un SaaS de RAG multimodal entregado por sistemas de mensajería (WhatsApp, Telegram, Slack) con un SDR integrado.",fw_title:"El Framework de IA",fw_desc:"Un modelo de trabajo para llevar la IA de la intención a la producción: las capacidades que el negocio necesita, las capas que las entregan y las restricciones que lo limitan todo. No es un cuadro genérico de madurez. Nace del trabajo con modelos operativos en distintas industrias y de la implementación práctica de IA, estructurado tal como realmente pienso la entrega, y como todo aquí sigue siendo un trabajo en progreso, mío para navegar y reformular a medida que el campo avanza.",fw_cta:"Abrir el framework",ess_title:"Ensayos",ess_desc:"Textos largos desde la frontera entre tecnología, sistemas y conocimiento. Pocas piezas, cada una densa, la mayoría nacidas del Atlas de la IA. Es donde voy más hondo de lo que un nodo permite: un problema, un puente, una idea que merece el argumento. Escrito para pensar en público, y para equivocarme con precisión en vez de acertar de forma vaga.",ess_cta:"Leer los ensayos",
     atlas_cta:"Entrar al Atlas",focus:"Qué hago",
     f1t:"Arquitectura empresarial",f1d:"Sistemas de nube y datos hechos para aguantar carga.",
     f2t:"Conocimiento e IA",f2d:"Convertir el caos de la información en estructura que la máquina usa.",
@@ -284,6 +315,34 @@ menu.querySelectorAll("a").forEach(a=>a.onclick=()=>menu.classList.remove("open"
   const li=document.getElementById('sh-li'); if(li) li.href=`https://www.linkedin.com/sharing/share-offsite/?url=${u}`;
   const wa=document.getElementById('sh-wa'); if(wa) wa.href=`https://wa.me/?text=${t}%20${u}`;
   const c=document.getElementById('sh-copy'); if(c) c.addEventListener('click',()=>{navigator.clipboard.writeText(location.href).then(()=>{const o=c.textContent;c.textContent='\u2713';setTimeout(()=>c.textContent=o,1500);});});
+})();
+
+// featured carousel: infinite loop, auto 5s, pause on hover, manual after click
+(function(){
+  const track=document.getElementById('track'); if(!track) return;
+  const slides=[...track.children];
+  const n=slides.length;
+  const dots=[...document.querySelectorAll('#dots .dot')];
+  // clones para loop sem rebobinar
+  const firstClone=slides[0].cloneNode(true), lastClone=slides[n-1].cloneNode(true);
+  track.appendChild(firstClone); track.insertBefore(lastClone, slides[0]);
+  let cur=1, manual=false, timer=null, anim=true;
+  function render(animate){ track.style.transition=animate?'transform .5s ease':'none'; track.style.transform='translateX('+(-cur*100)+'%)'; const real=((cur-1)%n+n)%n; dots.forEach((d,k)=>d.classList.toggle('on',k===real)); }
+  render(false);
+  track.addEventListener('transitionend',()=>{
+    if(cur===n+1){ cur=1; render(false); }
+    if(cur===0){ cur=n; render(false); }
+  });
+  function go(dir){ cur+=dir; render(true); }
+  function start(){ if(!manual && !timer) timer=setInterval(()=>go(1),5000); }
+  function pause(){ if(timer){clearInterval(timer);timer=null;} }
+  function stop(){ manual=true; pause(); }
+  document.getElementById('car-next').addEventListener('click',()=>{stop();go(1);});
+  document.getElementById('car-prev').addEventListener('click',()=>{stop();go(-1);});
+  dots.forEach((d,k)=>d.addEventListener('click',()=>{stop();cur=k+1;render(true);}));
+  const fe=document.getElementById('feature');
+  fe.addEventListener('mouseenter',pause); fe.addEventListener('mouseleave',start);
+  start();
 })();
 </script>
 </body>
