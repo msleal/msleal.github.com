@@ -37,8 +37,9 @@
 
   header.head{padding:72px 0 30px}
   .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
-  h1{font-size:clamp(30px,5vw,46px);line-height:1.08;margin:0 0 16px;font-weight:600;letter-spacing:-.01em}
-  .lead{font-size:17px;color:var(--fg);opacity:.9;margin:0;max-width:none}
+  h1{font-size:clamp(30px,5vw,46px);line-height:1.08;margin:0 0 12px;font-weight:600;letter-spacing:-.01em;text-align:center}
+  .role{font-size:clamp(18px,2.6vw,24px);font-style:italic;color:var(--fg);opacity:.95;margin:0 auto 16px;text-align:center}
+  .lead{font-size:17px;color:var(--fg);opacity:.9;margin:0 auto;max-width:none;text-align:center}
   .back{display:inline-block;margin:0 0 22px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);transition:.2s}
   .back:hover{color:var(--gold)}
   .eshare{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:28px}
@@ -113,7 +114,8 @@
   <div class="wrap">
     <a class="back" href="/">← Home</a>
     <div class="kicker" data-i18n="kicker">Framework</div>
-    <h1 data-i18n="title">Capability model: business outcomes through AI</h1>
+    <h1 data-i18n="title">Capability Model</h1>
+    <p class="role" data-i18n="role">business outcomes through AI</p>
     <p class="lead" data-i18n="lead">A working model for taking AI from intent to production: the capabilities a business needs, the layers that deliver them, and the constraints that bound them all. Not a generic maturity chart, and not finished. Like everything on this site it is a work in progress, a map I keep navigating and reshaping as the field moves and as new implementation patterns appear, readable from the business outcome at the top down to the platform that runs it.</p>
     <div class="eshare">
       <span class="hs-label" data-i18n="share">Share</span>
@@ -182,15 +184,15 @@
 <script>
 const I18N = {
   en:{nav_home:"Home",nav_atlas:"Atlas",nav_essays:"Essays",nav_framework:"Framework",nav_contact:"Contact",
-    kicker:"Framework",title:"Capability model: business outcomes through AI",
+    kicker:"Framework",title:"Capability Model",role:"business outcomes through AI",
     lead:"A working model for taking AI from intent to production: the capabilities a business needs, the layers that deliver them, and the constraints that bound them all. Not a generic maturity chart, and not finished. Like everything on this site it is a work in progress, a map I keep navigating and reshaping as the field moves and as new implementation patterns appear, readable from the business outcome at the top down to the platform that runs it.",
     foot:"Layered structure adapted from TOGAF, then shaped by operating-model designs and hands-on AI implementation across different industries and companies.",share:"Share",copy:"Copy link",rnote:"Applies across every layer."},
   pt:{nav_home:"Início",nav_atlas:"Atlas",nav_essays:"Ensaios",nav_framework:"Framework",nav_contact:"Contato",
-    kicker:"Framework",title:"Capability model: business outcomes through AI",
+    kicker:"Framework",title:"Capability Model",role:"business outcomes through AI",
     lead:"A working model for taking AI from intent to production: the capabilities a business needs, the layers that deliver them, and the constraints that bound them all. Not a generic maturity chart, and not finished. Like everything on this site it is a work in progress, a map I keep navigating and reshaping as the field moves and as new implementation patterns appear, readable from the business outcome at the top down to the platform that runs it.",
     foot:"Layered structure adapted from TOGAF, then shaped by operating-model designs and hands-on AI implementation across different industries and companies.",share:"Compartilhar",copy:"Copiar link",rnote:"Vale para todas as camadas."},
   es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_framework:"Framework",nav_contact:"Contacto",
-    kicker:"Framework",title:"Capability model: business outcomes through AI",
+    kicker:"Framework",title:"Capability Model",role:"business outcomes through AI",
     lead:"A working model for taking AI from intent to production: the capabilities a business needs, the layers that deliver them, and the constraints that bound them all. Not a generic maturity chart, and not finished. Like everything on this site it is a work in progress, a map I keep navigating and reshaping as the field moves and as new implementation patterns appear, readable from the business outcome at the top down to the platform that runs it.",
     foot:"Layered structure adapted from TOGAF, then shaped by operating-model designs and hands-on AI implementation across different industries and companies.",share:"Compartir",copy:"Copiar enlace",rnote:"Aplica a todas las capas."}
 };
