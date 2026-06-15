@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Capability Model: A Map from Intent to Production · Marcelo Leal</title>
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --mono:"SFMono-Regular",ui-monospace,"DejaVu Sans Mono",Menlo,Consolas,monospace;
+  }
+  [data-theme="dark"]{ --bg:#0b0e17; --bg2:#10131f; --fg:#e9e3d2; --fg-dim:#8a8472; --gold:#c8a24a; --line:rgba(200,162,74,.20); --card:rgba(255,255,255,.025); }
+  [data-theme="light"]{ --bg:#f2ece0; --bg2:#e9e2d2; --fg:#1c1a14; --fg-dim:#6d6452; --gold:#9c7521; --line:rgba(28,26,20,.16); --card:rgba(28,26,20,.025); }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--serif);transition:background .5s,color .5s;line-height:1.7}
+  a{color:inherit;text-decoration:none}
+  nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1080px;margin:0 auto;padding:0 32px}
+  .brand{font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px}
+  .brand .dot{color:var(--gold)}
+  .menu{display:flex;gap:30px;align-items:center}
+  .menu a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);position:relative;padding:4px 0;transition:color .25s}
+  .menu a:hover,.menu a.on{color:var(--fg)}
+  .menu a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--gold);transition:width .3s}
+  .menu a:hover::after,.menu a.on::after{width:100%}
+  .tools{display:flex;align-items:center;gap:14px}
+  .langs{display:flex;gap:4px;align-items:center}
+  .lang{display:flex;align-items:center;gap:5px;cursor:pointer;border:1px solid transparent;border-radius:3px;padding:4px 6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--fg-dim);transition:.2s;background:none}
+  .lang:hover{color:var(--fg)}
+  .lang.on{color:var(--fg);border-color:var(--line);background:var(--card)}
+  .lang svg{display:block;border-radius:1px}
+  .theme-btn{cursor:pointer;background:none;border:1px solid var(--line);border-radius:3px;width:32px;height:30px;display:grid;place-items:center;color:var(--fg);transition:.25s}
+  .theme-btn:hover{border-color:var(--gold)}
+  .menu-toggle{display:none}
+
+  .article{max-width:720px;margin:0 auto;padding:0 32px 120px}
+  .back{display:inline-block;margin:40px 0 26px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);transition:.2s}
+  .back:hover{color:var(--gold)}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+  h1{font-size:clamp(34px,5.5vw,52px);line-height:1.08;margin:0 0 18px;font-weight:600;letter-spacing:-.01em}
+  .meta{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim);margin-bottom:8px}
+  .rule{width:54px;height:1px;background:var(--gold);margin:34px 0}
+  .article h2{font-size:25px;font-weight:600;margin:46px 0 14px;letter-spacing:-.01em}
+  .article p{font-size:18px;margin:0 0 20px}
+  .article .lead{font-size:21px;line-height:1.55}
+  .article b{font-weight:500}
+  .cta{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--gold);color:var(--gold);padding:13px 22px;border-radius:3px;transition:.25s}
+  .cta:hover{background:var(--gold);color:var(--bg)}
+  .eshare{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 34px}
+  .eshare .hs-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-right:2px}
+  .eshare .sbtn{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--gold);border-radius:3px;padding:8px 14px;cursor:pointer;text-decoration:none;transition:.2s}
+  .eshare .sbtn:hover{background:var(--gold);color:var(--bg)}
+
+  figure{margin:30px 0}
+  figure img{max-width:100%;height:auto;display:block;margin:0 auto;border:1px solid var(--line);border-radius:6px;background:var(--card)}
+  figure figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-dim);margin-top:10px;text-align:center}
+  .fig-right{float:right;width:46%;margin:6px 0 22px 30px}
+  .fig-left{float:left;width:46%;margin:6px 30px 22px 0}
+  figure.ph{border:1px dashed var(--line);border-radius:6px;min-height:150px;display:flex;align-items:center;justify-content:center;position:relative}
+  figure.ph img{display:none}
+  figure.ph::before{content:"image: " attr(data-name);font-family:var(--mono);font-size:12px;color:var(--fg-dim)}
+
+  @media(max-width:760px){
+    .menu{position:fixed;inset:64px 0 auto 0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0;transform:translateY(-120%);transition:transform .35s;align-items:stretch}
+    .menu.open{transform:none}
+    .menu a{padding:16px 32px;font-size:13px}.menu a::after{display:none}
+    .menu-toggle{display:grid;place-items:center;background:none;border:1px solid var(--line);border-radius:3px;width:34px;height:30px;cursor:pointer;color:var(--fg)}
+    .langs .code{display:none}
+    .fig-right,.fig-left{float:none;width:100%;margin:30px 0}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-in">
+    <a href="/" class="brand">Marcelo Leal<span class="dot">.</span></a>
+    <div class="menu" id="menu">
+      <a href="/" data-i18n="nav_home">Home</a>
+      <a href="/atlas/" data-i18n="nav_atlas">Atlas</a>
+      <a href="/essays/" class="on" data-i18n="nav_essays">Essays</a>
+      <a href="/framework/" data-i18n="nav_framework">Framework</a>
+      <a href="/#contact" data-i18n="nav_contact">Contact</a>
+    </div>
+    <div class="tools">
+      <div class="langs" id="langs">
+        <button class="lang on" data-lang="en"><svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#3c3b6e"/><g fill="#b22234"><rect y="0" width="18" height="1.33"/><rect y="2.66" width="18" height="1.33"/><rect y="5.33" width="18" height="1.33"/><rect y="8" width="18" height="1.33"/><rect y="10.66" width="18" height="1.33"/></g><rect width="8" height="6.66" fill="#3c3b6e"/></svg><span class="code">EN</span></button>
+        <button class="lang" data-lang="pt"><svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#009b3a"/><path d="M9 1.4 16.4 6 9 10.6 1.6 6Z" fill="#fedf00"/><circle cx="9" cy="6" r="2.4" fill="#002776"/></svg><span class="code">PT</span></button>
+        <button class="lang" data-lang="es"><svg width="18" height="12" viewBox="0 0 18 12"><rect width="18" height="12" fill="#c60b1e"/><rect y="3" width="18" height="6" fill="#ffc400"/></svg><span class="code">ES</span></button>
+      </div>
+      <button class="theme-btn" id="theme" aria-label="theme">
+        <svg id="ic-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg id="ic-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      </button>
+      <button class="menu-toggle" id="mtoggle" aria-label="menu"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</nav>
+
+<article class="article" id="art-en">
+  <a class="back" href="/essays/">← Essays</a>
+  <div class="kicker">Essay</div>
+  <h1>The Capability Model: A Map from Intent to Production</h1>
+  <div class="meta">Marcelo Leal · June 15, 2026</div>
+  <div class="rule"></div>
+  <div class="eshare">
+    <span class="hs-label">Share</span>
+    <a class="sbtn sh-x" target="_blank" rel="noopener">X</a>
+    <a class="sbtn sh-li" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="sbtn sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+    <button class="sbtn sh-copy">Copy link</button>
+  </div>
+
+  <p class="lead">Every company now has AI initiatives. Few have a map from the business outcome they want to the platform that would actually deliver it. Between intent and production sits a stack of decisions, and most teams meet them one tool at a time, out of order. The Capability Model is my answer to that: one layered map of what a business needs to take AI from intent to production, and how each layer depends on the one beneath it.</p>
+
+  <h2>A model, not a checklist</h2>
+  <p>A maturity chart ranks you, level one to level five, as if progress were a single line. A capability model does something different. It shows what has to exist for AI to reach production, arranges those capabilities into layers, and makes the dependencies visible. You read it top down, from the outcome the business wants to the infrastructure that runs it, and at every step the question is the same: what must be true here for the layer above to stand.</p>
+
+  <figure data-name="framework-overview.png">
+    <img src="img/framework-overview.png" alt="The Capability Model: four layers and the constraints band">
+    <figcaption>Four layers, read top down, from the business outcome to the platform that runs it.</figcaption>
+  </figure>
+
+  <p>It is not a generic maturity ladder, and it is not finished. Like everything I publish, it is a working model, a map I keep reshaping as the field moves and as new implementation patterns show up in real work.</p>
+
+  <h2>Four layers, one reading</h2>
+  <p>The model has four layers, and each one answers to the layer above and leans on the layer below. <b>Business</b> is the top: the outcomes AI is supposed to serve, customer, operations, product, risk and control, illustrative and never exhaustive. <b>Application</b> is where AI meets the person who uses it, shown as families rather than products: agents, assistants, automations. <b>Data</b> is where meaning lives, the layer that turns records into something a machine can reason over. <b>Technology</b> is the floor: the cloud, the data platform, the AI platform, and the integration that runs all of it.</p>
+
+  <figure class="fig-right" data-name="layer-open.png">
+    <img src="img/layer-open.png" alt="One layer opened to show the capabilities inside it">
+    <figcaption>Open any layer and the capabilities inside it appear.</figcaption>
+  </figure>
+
+  <p>The point of the layering is not tidiness. It is that a failure travels upward. If the data layer does not know what a customer is, no agent above it can act on one, however good the model. The map makes that dependency impossible to ignore, which is exactly what a slide of disconnected boxes lets you do.</p>
+
+  <h2>What cuts across</h2>
+  <p>Some things refuse to sit in a layer. Cost, latency, security, scale, reliability, compliance, these bound every layer at once, and treating them as a footnote is how production systems fail in their second year. So the model gives them their own place, a band that runs across all four layers, named as first-class concerns rather than assumed.</p>
+
+  <figure class="fig-left" data-name="constraints-band.png">
+    <img src="img/constraints-band.png" alt="The six constraints that apply across every layer">
+    <figcaption>Six constraints. They do not live in a layer, they cut through all of them.</figcaption>
+  </figure>
+
+  <p>This is the part a capability map gets right and a feature list gets wrong. A demo answers the question once. A constraint is the same question asked again under load, under audit, under a budget. Naming the six of them up front is the difference between a thing that works in a meeting and a thing that works in production.</p>
+
+  <h2>Where it goes deepest</h2>
+  <p>One layer carries more weight than the rest, and it is the one most roadmaps skip: data, and inside it, the ontology. Models are fluent in language and blind to meaning. Most systems store records; the ontology stores what those records mean and how they relate, so software and people reason over one shared model. Read from the bottom up, it is a single path: data sources, then binding and entity resolution so the same real-world thing becomes one object, then a semantic model in open standards, then a knowledge graph you can query, then logic and rules that validate and derive, then actions that let the model operate and not just describe, and finally serving, where apps and agents consume it.</p>
+
+  <figure data-name="ontology-layer.png">
+    <img src="img/ontology-layer.png" alt="The ontology layer, read from sources at the bottom to serving at the top">
+    <figcaption>The data layer, read bottom up: sources become meaning, meaning becomes something you can act on.</figcaption>
+  </figure>
+
+  <p>This is where I spend most of my depth, because it is the layer everything above inherits. Get it wrong and the confusion is passed up, silently, to every agent and every dashboard. Get it right and the rest gets easier than it has any right to be. The public model stops at the shape of this layer; the detailed implementation is its own, longer story.</p>
+
+  <h2>Why this, and why in public</h2>
+  <p>The skeleton is borrowed honestly: the layering is adapted from TOGAF, then reshaped by operating-model design and by hands-on AI implementation across different industries. I did not invent the idea of layers. What I am adding is a specific reading of how they apply to AI, where the dependencies actually bite, and which constraints decide whether any of it survives contact with production.</p>
+  <p>It is a work in progress and a study in public, the same as the Atlas. It will be wrong in places and it will change. I publish it because the thinking is the contribution: the deepest detail can stay private and the map can still be useful, to me for keeping the whole shape in my head, and to anyone trying to get from an AI intent to something that actually runs. The map is the argument.</p>
+  <a class="cta" href="/framework/">Open the Framework →</a>
+</article>
+
+<article class="article" id="art-pt" style="display:none">
+  <a class="back" href="/essays/">← Ensaios</a>
+  <div class="kicker">Ensaio</div>
+  <h1>O Modelo de Capacidades: Um Mapa da Intenção à Produção</h1>
+  <div class="meta">Marcelo Leal · 15 de junho de 2026</div>
+  <div class="rule"></div>
+  <div class="eshare">
+    <span class="hs-label">Compartilhar</span>
+    <a class="sbtn sh-x" target="_blank" rel="noopener">X</a>
+    <a class="sbtn sh-li" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="sbtn sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+    <button class="sbtn sh-copy">Copiar link</button>
+  </div>
+
+  <p class="lead">Hoje toda empresa tem iniciativas de IA. Poucas têm um mapa que vá do resultado de negócio que querem até a plataforma que de fato o entregaria. Entre a intenção e a produção existe uma pilha de decisões, e a maioria dos times as encontra uma ferramenta de cada vez, fora de ordem. O Modelo de Capacidades é a minha resposta a isso: um mapa em camadas do que um negócio precisa para levar a IA da intenção à produção, e de como cada camada depende da que está abaixo dela.</p>
+
+  <h2>Um modelo, não um checklist</h2>
+  <p>Um gráfico de maturidade te classifica, do nível um ao cinco, como se o progresso fosse uma linha só. Um modelo de capacidades faz algo diferente. Ele mostra o que precisa existir para a IA chegar à produção, organiza essas capacidades em camadas, e torna as dependências visíveis. Você o lê de cima para baixo, do resultado que o negócio quer até a infraestrutura que o executa, e em cada passo a pergunta é a mesma: o que precisa ser verdade aqui para a camada de cima se sustentar.</p>
+
+  <figure data-name="framework-overview.png">
+    <img src="img/framework-overview.png" alt="O Modelo de Capacidades: quatro camadas e a faixa de restrições">
+    <figcaption>Quatro camadas, lidas de cima para baixo, do resultado de negócio à plataforma que o executa.</figcaption>
+  </figure>
+
+  <p>Não é uma escada genérica de maturidade, e não está pronto. Como tudo que eu publico, é um modelo em andamento, um mapa que eu sigo remodelando conforme o campo se move e conforme novos padrões de implementação aparecem no trabalho real.</p>
+
+  <h2>Quatro camadas, uma leitura</h2>
+  <p>O modelo tem quatro camadas, e cada uma responde à camada de cima e se apoia na de baixo. <b>Negócio</b> é o topo: os resultados que a IA deve servir, cliente, operações, produto, risco e controle, ilustrativos e nunca exaustivos. <b>Aplicação</b> é onde a IA encontra a pessoa que a usa, mostrada como famílias em vez de produtos: agentes, assistentes, automações. <b>Dados</b> é onde mora o significado, a camada que transforma registros em algo sobre o que uma máquina possa raciocinar. <b>Tecnologia</b> é o chão: a nuvem, a plataforma de dados, a plataforma de IA, e a integração que roda tudo isso.</p>
+
+  <figure class="fig-right" data-name="layer-open.png">
+    <img src="img/layer-open.png" alt="Uma camada aberta mostrando as capacidades dentro dela">
+    <figcaption>Abra qualquer camada e as capacidades dentro dela aparecem.</figcaption>
+  </figure>
+
+  <p>O sentido das camadas não é arrumação. É que uma falha sobe. Se a camada de dados não sabe o que é um cliente, nenhum agente acima dela consegue agir sobre um, por melhor que seja o modelo. O mapa torna essa dependência impossível de ignorar, que é exatamente o que um slide de caixas soltas permite fazer.</p>
+
+  <h2>O que atravessa tudo</h2>
+  <p>Algumas coisas se recusam a morar em uma camada. Custo, latência, segurança, escala, confiabilidade, conformidade, elas limitam todas as camadas ao mesmo tempo, e tratá-las como nota de rodapé é como sistemas de produção falham no segundo ano. Então o modelo lhes dá um lugar próprio, uma faixa que corre por todas as quatro camadas, nomeadas como preocupações de primeira classe em vez de presumidas.</p>
+
+  <figure class="fig-left" data-name="constraints-band.png">
+    <img src="img/constraints-band.png" alt="As seis restrições que se aplicam a todas as camadas">
+    <figcaption>Seis restrições. Elas não moram em uma camada, atravessam todas.</figcaption>
+  </figure>
+
+  <p>Essa é a parte que um mapa de capacidades acerta e uma lista de funcionalidades erra. Uma demo responde a pergunta uma vez. Uma restrição é a mesma pergunta feita de novo sob carga, sob auditoria, sob um orçamento. Nomear as seis logo de início é a diferença entre uma coisa que funciona numa reunião e uma coisa que funciona em produção.</p>
+
+  <h2>Onde ele vai mais fundo</h2>
+  <p>Uma camada carrega mais peso do que as outras, e é a que a maioria dos roadmaps pula: dados, e dentro dela, a ontologia. Os modelos são fluentes em linguagem e cegos para o significado. A maioria dos sistemas guarda registros; a ontologia guarda o que esses registros significam e como se relacionam, para que software e pessoas raciocinem sobre um único modelo compartilhado. Lida de baixo para cima, é um caminho só: fontes de dados, depois vínculo e resolução de entidade para que a mesma coisa do mundo real vire um único objeto, depois um modelo semântico em padrões abertos, depois um grafo de conhecimento que você pode consultar, depois lógica e regras que validam e derivam, depois ações que deixam o modelo operar e não só descrever, e por fim o serviço, onde apps e agentes a consomem.</p>
+
+  <figure data-name="ontology-layer.png">
+    <img src="img/ontology-layer.png" alt="A camada de ontologia, lida das fontes embaixo ao serviço no topo">
+    <figcaption>A camada de dados, lida de baixo para cima: fontes viram significado, significado vira algo sobre o que se pode agir.</figcaption>
+  </figure>
+
+  <p>É aqui que eu invisto a maior parte da minha profundidade, porque é a camada que tudo acima herda. Erre aqui e a confusão sobe, em silêncio, para cada agente e cada painel. Acerte e o resto fica mais fácil do que tem o direito de ser. O modelo público para na forma desta camada; a implementação detalhada é uma história própria, mais longa.</p>
+
+  <h2>Por que isto, e por que em público</h2>
+  <p>O esqueleto é emprestado com honestidade: a estrutura em camadas é adaptada do TOGAF, depois remodelada por desenho de modelo operacional e por implementação prática de IA em diferentes indústrias. Eu não inventei a ideia de camadas. O que eu acrescento é uma leitura específica de como elas se aplicam à IA, de onde as dependências realmente mordem, e de quais restrições decidem se algo disso sobrevive ao contato com a produção.</p>
+  <p>É um trabalho em andamento e um estudo em público, igual ao Atlas. Vai estar errado em alguns pontos e vai mudar. Eu publico porque o pensamento é a contribuição: o detalhe mais profundo pode ficar privado e o mapa ainda ser útil, para mim, para segurar a forma inteira na cabeça, e para qualquer um tentando sair de uma intenção de IA para algo que de fato roda. O mapa é o argumento.</p>
+  <a class="cta" href="/framework/">Abrir o Framework →</a>
+</article>
+
+<article class="article" id="art-es" style="display:none">
+  <a class="back" href="/essays/">← Ensayos</a>
+  <div class="kicker">Ensayo</div>
+  <h1>El Modelo de Capacidades: Un Mapa de la Intención a la Producción</h1>
+  <div class="meta">Marcelo Leal · 15 de junio de 2026</div>
+  <div class="rule"></div>
+  <div class="eshare">
+    <span class="hs-label">Compartir</span>
+    <a class="sbtn sh-x" target="_blank" rel="noopener">X</a>
+    <a class="sbtn sh-li" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="sbtn sh-wa" target="_blank" rel="noopener">WhatsApp</a>
+    <button class="sbtn sh-copy">Copiar enlace</button>
+  </div>
+
+  <p class="lead">Hoy toda empresa tiene iniciativas de IA. Pocas tienen un mapa que vaya del resultado de negocio que quieren hasta la plataforma que de verdad lo entregaría. Entre la intención y la producción hay una pila de decisiones, y la mayoría de los equipos las encuentra una herramienta a la vez, fuera de orden. El Modelo de Capacidades es mi respuesta a eso: un mapa en capas de lo que un negocio necesita para llevar la IA de la intención a la producción, y de cómo cada capa depende de la que está debajo.</p>
+
+  <h2>Un modelo, no una checklist</h2>
+  <p>Un gráfico de madurez te clasifica, del nivel uno al cinco, como si el progreso fuera una sola línea. Un modelo de capacidades hace algo distinto. Muestra qué tiene que existir para que la IA llegue a producción, ordena esas capacidades en capas, y hace visibles las dependencias. Se lee de arriba hacia abajo, del resultado que el negocio quiere hasta la infraestructura que lo ejecuta, y en cada paso la pregunta es la misma: qué debe ser verdad aquí para que la capa de arriba se sostenga.</p>
+
+  <figure data-name="framework-overview.png">
+    <img src="img/framework-overview.png" alt="El Modelo de Capacidades: cuatro capas y la franja de restricciones">
+    <figcaption>Cuatro capas, leídas de arriba hacia abajo, del resultado de negocio a la plataforma que lo ejecuta.</figcaption>
+  </figure>
+
+  <p>No es una escalera genérica de madurez, y no está terminado. Como todo lo que publico, es un modelo en construcción, un mapa que sigo remodelando a medida que el campo se mueve y aparecen nuevos patrones de implementación en el trabajo real.</p>
+
+  <h2>Cuatro capas, una lectura</h2>
+  <p>El modelo tiene cuatro capas, y cada una responde a la capa de arriba y se apoya en la de abajo. <b>Negocio</b> es la cima: los resultados que la IA debe servir, cliente, operaciones, producto, riesgo y control, ilustrativos y nunca exhaustivos. <b>Aplicación</b> es donde la IA encuentra a la persona que la usa, mostrada como familias en vez de productos: agentes, asistentes, automatizaciones. <b>Datos</b> es donde vive el significado, la capa que convierte registros en algo sobre lo que una máquina pueda razonar. <b>Tecnología</b> es el suelo: la nube, la plataforma de datos, la plataforma de IA, y la integración que lo ejecuta todo.</p>
+
+  <figure class="fig-right" data-name="layer-open.png">
+    <img src="img/layer-open.png" alt="Una capa abierta mostrando las capacidades dentro de ella">
+    <figcaption>Abre cualquier capa y las capacidades dentro de ella aparecen.</figcaption>
+  </figure>
+
+  <p>El sentido de las capas no es orden estético. Es que una falla sube. Si la capa de datos no sabe qué es un cliente, ningún agente por encima puede actuar sobre uno, por bueno que sea el modelo. El mapa hace esa dependencia imposible de ignorar, que es exactamente lo que una diapositiva de cajas sueltas permite hacer.</p>
+
+  <h2>Lo que atraviesa todo</h2>
+  <p>Algunas cosas se niegan a vivir en una capa. Costo, latencia, seguridad, escala, fiabilidad, cumplimiento, limitan todas las capas a la vez, y tratarlas como nota al pie es como los sistemas de producción fallan en su segundo año. Por eso el modelo les da un lugar propio, una franja que recorre las cuatro capas, nombradas como preocupaciones de primera clase en vez de asumidas.</p>
+
+  <figure class="fig-left" data-name="constraints-band.png">
+    <img src="img/constraints-band.png" alt="Las seis restricciones que aplican a todas las capas">
+    <figcaption>Seis restricciones. No viven en una capa, atraviesan todas.</figcaption>
+  </figure>
+
+  <p>Esta es la parte que un mapa de capacidades acierta y una lista de funcionalidades falla. Una demo responde la pregunta una vez. Una restricción es la misma pregunta hecha de nuevo bajo carga, bajo auditoría, bajo un presupuesto. Nombrar las seis desde el inicio es la diferencia entre algo que funciona en una reunión y algo que funciona en producción.</p>
+
+  <h2>Dónde va más profundo</h2>
+  <p>Una capa carga más peso que las demás, y es la que la mayoría de los roadmaps salta: datos, y dentro de ella, la ontología. Los modelos son fluidos en lenguaje y ciegos al significado. La mayoría de los sistemas guardan registros; la ontología guarda lo que esos registros significan y cómo se relacionan, para que software y personas razonen sobre un único modelo compartido. Leída de abajo hacia arriba, es un solo camino: fuentes de datos, luego vínculo y resolución de entidad para que la misma cosa del mundo real se vuelva un único objeto, luego un modelo semántico en estándares abiertos, luego un grafo de conocimiento que puedes consultar, luego lógica y reglas que validan y derivan, luego acciones que dejan al modelo operar y no solo describir, y por fin el servicio, donde apps y agentes la consumen.</p>
+
+  <figure data-name="ontology-layer.png">
+    <img src="img/ontology-layer.png" alt="La capa de ontología, leída de las fuentes abajo al servicio arriba">
+    <figcaption>La capa de datos, leída de abajo hacia arriba: las fuentes se vuelven significado, el significado se vuelve algo sobre lo que actuar.</figcaption>
+  </figure>
+
+  <p>Aquí es donde invierto la mayor parte de mi profundidad, porque es la capa que todo lo de arriba hereda. Equivócate aquí y la confusión sube, en silencio, a cada agente y cada panel. Acierta y el resto se vuelve más fácil de lo que tiene derecho a ser. El modelo público se detiene en la forma de esta capa; la implementación detallada es una historia propia, más larga.</p>
+
+  <h2>Por qué esto, y por qué en público</h2>
+  <p>El esqueleto está prestado con honestidad: la estructura en capas está adaptada de TOGAF, luego remodelada por diseño de modelo operativo y por implementación práctica de IA en distintas industrias. No inventé la idea de capas. Lo que agrego es una lectura específica de cómo aplican a la IA, dónde las dependencias de verdad muerden, y qué restricciones deciden si algo de esto sobrevive al contacto con la producción.</p>
+  <p>Es un trabajo en construcción y un estudio en público, igual que el Atlas. Estará equivocado en algunos puntos y cambiará. Lo publico porque el pensamiento es la contribución: el detalle más profundo puede quedarse privado y el mapa seguir siendo útil, para mí, para sostener la forma entera en la cabeza, y para cualquiera que intente pasar de una intención de IA a algo que de verdad funciona. El mapa es el argumento.</p>
+  <a class="cta" href="/framework/">Abrir el Framework →</a>
+</article>
+
+<script>
+const NAV = {
+  en:{nav_home:"Home",nav_atlas:"Atlas",nav_essays:"Essays",nav_framework:"Framework",nav_contact:"Contact"},
+  pt:{nav_home:"Início",nav_atlas:"Atlas",nav_essays:"Ensaios",nav_framework:"Framework",nav_contact:"Contato"},
+  es:{nav_home:"Inicio",nav_atlas:"Atlas",nav_essays:"Ensayos",nav_framework:"Framework",nav_contact:"Contacto"}
+};
+const docEl=document.documentElement;
+function setLang(l){
+  ["en","pt","es"].forEach(x=>document.getElementById("art-"+x).style.display = x===l?"block":"none");
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.getAttribute("data-i18n");if(NAV[l][k])el.textContent=NAV[l][k];});
+  document.querySelectorAll(".lang").forEach(b=>b.classList.toggle("on",b.dataset.lang===l));
+  docEl.setAttribute("lang",l);
+}
+document.querySelectorAll(".lang").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+
+const moon=document.getElementById("ic-moon"),sun=document.getElementById("ic-sun");
+function applyTheme(t){docEl.setAttribute("data-theme",t);moon.style.display=t==="dark"?"block":"none";sun.style.display=t==="dark"?"none":"block";}
+let theme="light";
+try{ theme=localStorage.getItem("ml-theme")||"light"; }catch(e){}
+applyTheme(theme);
+document.getElementById("theme").onclick=()=>{theme=docEl.getAttribute("data-theme")==="dark"?"light":"dark";applyTheme(theme);try{localStorage.setItem("ml-theme",theme);}catch(e){}};
+
+const menu=document.getElementById("menu");
+document.getElementById("mtoggle").onclick=()=>menu.classList.toggle("open");
+menu.querySelectorAll("a").forEach(a=>a.onclick=()=>menu.classList.remove("open"));
+
+// placeholder figures: if the image is not there yet, show a labeled box
+document.querySelectorAll("figure img").forEach(img=>{
+  img.addEventListener("error",()=>img.closest("figure").classList.add("ph"));
+});
+
+// share buttons (class-based so it works across the en/pt/es blocks)
+(function(){
+  const u=encodeURIComponent(location.href), t=encodeURIComponent(document.title);
+  document.querySelectorAll(".sh-x").forEach(a=>a.href=`https://twitter.com/intent/tweet?text=${t}&url=${u}`);
+  document.querySelectorAll(".sh-li").forEach(a=>a.href=`https://www.linkedin.com/sharing/share-offsite/?url=${u}`);
+  document.querySelectorAll(".sh-wa").forEach(a=>a.href=`https://wa.me/?text=${t}%20${u}`);
+  document.querySelectorAll(".sh-copy").forEach(c=>c.addEventListener("click",()=>{navigator.clipboard.writeText(location.href).then(()=>{const o=c.textContent;c.textContent="\u2713";setTimeout(()=>c.textContent=o,1500);});}));
+})();
+</script>
+</body>
+</html>
